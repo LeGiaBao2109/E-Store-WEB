@@ -44,46 +44,34 @@
                                 <div class="card-body p-4 p-md-5">
                                     <div class="tab-content" id="authTabContent">
 
-                                        <div class="tab-pane fade show active" id="login" role="tabpanel">
-                                            <div class="text-center mb-4">
-                                                <h3 class="fw-bold text-danger">Chào mừng trở lại!</h3>
-                                                <p class="text-secondary small">Vui lòng đăng nhập để tiếp tục</p>
+                                        <form id="loginForm">
+                                            <div class="mb-3">
+                                                <label class="form-label small fw-bold">Tên đăng nhập / Email</label>
+                                                <input type="text" id="loginUser"
+                                                    class="form-control rounded-pill px-3 shadow-none"
+                                                    placeholder="Username hoặc Email">
                                             </div>
-                                            <form>
-                                                <div class="mb-3">
-                                                    <label class="form-label small fw-bold">Tên đăng nhập /
-                                                        Email</label>
-                                                    <input type="text"
-                                                        class="form-control rounded-pill px-3 shadow-none"
-                                                        placeholder="Username hoặc Email">
+                                            <div class="mb-3">
+                                                <label class="form-label small fw-bold">Mật khẩu</label>
+                                                <div class="input-group">
+                                                    <input type="password" id="loginPass"
+                                                        class="form-control rounded-start-pill px-3 shadow-none border-end-0 password-input"
+                                                        placeholder="********">
+                                                    <span
+                                                        class="input-group-text bg-white rounded-end-pill border-start-0 toggle-password"
+                                                        style="cursor: pointer;">
+                                                        <i class="bi bi-eye-slash text-secondary"></i>
+                                                    </span>
                                                 </div>
-                                                <div class="mb-3">
-                                                    <label class="form-label small fw-bold">Mật khẩu</label>
-                                                    <div class="input-group">
-                                                        <input type="password"
-                                                            class="form-control rounded-start-pill px-3 shadow-none border-end-0 password-input"
-                                                            placeholder="********">
-                                                        <span
-                                                            class="input-group-text bg-white rounded-end-pill border-start-0 toggle-password"
-                                                            style="cursor: pointer;">
-                                                            <i class="bi bi-eye-slash text-secondary"></i>
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                                <div class="d-flex justify-content-end mb-4 px-2">
-                                                    <a href="#" class="text-danger small text-decoration-none">Quên mật
-                                                        khẩu?</a>
-                                                </div>
-                                                <button type="submit"
-                                                    class="btn btn-danger w-100 rounded-pill py-2 fw-bold shadow">ĐĂNG
-                                                    NHẬP</button>
-                                                <div class="text-center mt-3 small text-secondary">
-                                                    Chưa có tài khoản? <a href="#"
-                                                        class="text-danger text-decoration-none fw-bold"
-                                                        id="switchToRegister">Đăng ký ngay</a>
-                                                </div>
-                                            </form>
-                                        </div>
+                                            </div>
+                                            <div class="d-flex justify-content-end mb-4 px-2">
+                                                <a href="#" id="forgotPassword"
+                                                    class="text-danger small text-decoration-none">Quên mật khẩu?</a>
+                                            </div>
+                                            <button type="submit"
+                                                class="btn btn-danger w-100 rounded-pill py-2 fw-bold shadow">ĐĂNG
+                                                NHẬP</button>
+                                        </form>
 
                                         <div class="tab-pane fade" id="register" role="tabpanel">
                                             <div class="text-center mb-4">
@@ -94,42 +82,51 @@
                                                     <label class="form-label small fw-bold">Họ tên</label>
                                                     <input type="text"
                                                         class="form-control rounded-pill px-3 shadow-none"
-                                                        placeholder="Lê Gia Bảo">
+                                                        placeholder="Nguyễn Văn A" id="regFullName"
+                                                        aria-describedby="errRegFullName">
+                                                    <small id="errRegFullName" class="form-text text-danger">*</small>
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label small fw-bold">Email</label>
                                                     <input type="email"
                                                         class="form-control rounded-pill px-3 shadow-none"
-                                                        placeholder="bao@example.com">
+                                                        placeholder="bao@example.com" id="regEmail"
+                                                        aria-describedby="errRegEmail">
+                                                    <small id="errRegEmail" class="form-text text-danger">*</small>
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label small fw-bold">SĐT</label>
                                                     <input type="tel" class="form-control rounded-pill px-3 shadow-none"
-                                                        placeholder="0123456789">
+                                                        placeholder="0123456789" id="regSDT"
+                                                        aria-describedby="errRegSDT">
+                                                    <small id="errRegSDT" class="form-text text-danger">*</small>
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label small fw-bold">Tên đăng nhập</label>
                                                     <input type="text"
                                                         class="form-control rounded-pill px-3 shadow-none"
-                                                        placeholder="Username">
+                                                        placeholder="Username" id="regUserName"
+                                                        aria-describedby="errRegUserName">
+                                                    <small id="errRegUserName" class="form-text text-danger">*</small>
                                                 </div>
                                                 <div class="mb-3">
                                                     <label class="form-label small fw-bold">Mật khẩu</label>
                                                     <div class="input-group">
                                                         <input type="password"
                                                             class="form-control rounded-start-pill px-3 shadow-none border-end-0 password-input"
-                                                            placeholder="********">
+                                                            placeholder="********" id="regPass">
                                                         <span
                                                             class="input-group-text bg-white rounded-end-pill border-start-0 toggle-password"
                                                             style="cursor: pointer;">
                                                             <i class="bi bi-eye-slash text-secondary"></i>
                                                         </span>
                                                     </div>
+                                                    <span id="errRegPass" class="text-danger small ps-3">*</span>
                                                 </div>
                                                 <div class="mb-4">
                                                     <label class="form-label small fw-bold">Xác nhận mật khẩu</label>
                                                     <div class="input-group">
-                                                        <input type="password"
+                                                        <input type="password" id="regConfirmPass"
                                                             class="form-control rounded-start-pill px-3 shadow-none border-end-0 password-input"
                                                             placeholder="********">
                                                         <span
@@ -138,10 +135,7 @@
                                                             <i class="bi bi-eye-slash text-secondary"></i>
                                                         </span>
                                                     </div>
-                                                </div>
-                                                <div class="d-flex justify-content-end my-4 px-2">
-                                                    <a href="#" class="text-danger small text-decoration-none">Quên mật
-                                                        khẩu?</a>
+                                                    <span id="errRegConfirmPass" class="text-danger small ps-3">*</span>
                                                 </div>
                                                 <button type="submit"
                                                     class="btn btn-danger w-100 rounded-pill py-2 fw-bold shadow">ĐĂNG
@@ -169,6 +163,7 @@
     <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <script type="module" src="/assets/client/js/script.js"></script>
 </body>
 
