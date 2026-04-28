@@ -23,16 +23,27 @@ const createProductCard = (p, index, isGrid = true) => {
     `;
 };
 
+const renderProductsToContainer = (products, $container, isGrid) => {
+    $container.empty();
+    if (products.length === 0) {
+        $container.append('<div class="col-12 text-center py-5"><h4 class="text-muted">Không tìm thấy sản phẩm nào phù hợp.</h4></div>');
+    } else {
+        products.forEach((p, index) => {
+            $container.append(createProductCard(p, index, isGrid));
+        });
+    }
+    checkLoadMoreVisibility();
+};
+
 export const initProductList = () => {
     initBrandMenu();
 
     const $productContainer = $('#product-container');
     const $productSlider = $('#productSlider');
     const $loadMoreBtn = $('#loadMoreBtn');
-
     const allProducts = JSON.parse(localStorage.getItem('products')) || [];
 
-    if ($productContainer.length) {
+    const executeFilter = () => {
         const path = window.location.pathname;
         const pathParts = path.split('/').filter(p => p !== "");
         const categorySlug = pathParts[pathParts.length - 1];
@@ -40,57 +51,75 @@ export const initProductList = () => {
         const urlParams = new URLSearchParams(window.location.search);
         const brandFilter = urlParams.get('brand');
 
-        let filteredProducts = [];
+        const selectedPriceRanges = [];
+        $('.price-checkbox:checked').each(function () {
+            const [min, max] = $(this).val().split('-').map(Number);
+            selectedPriceRanges.push({
+                min,
+                max
+            });
+        });
 
-        if (categorySlug === 'products' || categorySlug === '' || !categorySlug) {
-            filteredProducts = allProducts;
-        } else {
-            filteredProducts = allProducts.filter(p => p.categorySlug === categorySlug);
+        const sortOrder = $('#sortPrice').val();
+
+        let filtered = allProducts;
+
+        if (categorySlug && categorySlug !== 'products' && categorySlug !== '') {
+            filtered = filtered.filter(p => p.categorySlug === categorySlug);
         }
 
         if (brandFilter) {
-            filteredProducts = filteredProducts.filter(p =>
-                p.brand && p.brand.toLowerCase() === brandFilter.toLowerCase()
-            );
+            filtered = filtered.filter(p => p.brand && p.brand.toLowerCase() === brandFilter.toLowerCase());
         }
 
-        $productContainer.empty();
-        if (filteredProducts.length === 0) {
-            $productContainer.append('<div class="col-12 text-center py-5"><h4 class="text-muted">Không tìm thấy sản phẩm nào thuộc thương hiệu này.</h4></div>');
-        } else {
-            filteredProducts.forEach((p, index) => {
-                $productContainer.append(createProductCard(p, index, true));
+        if (selectedPriceRanges.length > 0) {
+            filtered = filtered.filter(p => {
+                return selectedPriceRanges.some(range => p.price >= range.min && p.price <= range.max);
             });
         }
 
-        checkLoadMoreVisibility();
+        if (sortOrder === 'asc') {
+            filtered.sort((a, b) => a.price - b.price);
+        } else if (sortOrder === 'desc') {
+            filtered.sort((a, b) => b.price - a.price);
+        } else {
+            filtered.reverse();
+        }
+
+        renderProductsToContainer(filtered, $productContainer, true);
+    };
+
+    $('.price-checkbox').on('change', function () {
+        executeFilter();
+    });
+
+    $('#sortPrice').on('change', function () {
+        executeFilter();
+    });
+
+    $('.price-checkbox').on('change', function () {
+        executeFilter();
+    });
+
+    if ($productContainer.length) {
+        executeFilter();
 
         $loadMoreBtn.off('click').on('click', function (e) {
             e.preventDefault();
-            const windowWidth = $(window).width();
-            let itemsPerRow = windowWidth >= 992 ? 4 : (windowWidth >= 768 ? 3 : 2);
-            const itemsToShow = itemsPerRow * 2;
-
             const $hiddenItems = $('.product-item.d-none');
-            if ($hiddenItems.length > 0) {
-                $hiddenItems.slice(0, itemsToShow).removeClass('d-none').hide().fadeIn(600);
-            }
+            $hiddenItems.slice(0, 8).removeClass('d-none').hide().fadeIn(600);
             checkLoadMoreVisibility();
         });
     }
 
     if ($productSlider.length) {
-        $productSlider.empty();
-        allProducts.forEach((p, index) => {
-            $productSlider.append(createProductCard(p, index, false));
-        });
-
+        renderProductsToContainer(allProducts, $productSlider, false);
         $('.next-btn').off('click').on('click', () => $productSlider.animate({
             scrollLeft: '+=300'
-        }, 400));
+        }, 100));
         $('.prev-btn').off('click').on('click', () => $productSlider.animate({
             scrollLeft: '-=300'
-        }, 400));
+        }, 100));
     }
 };
 
@@ -104,11 +133,11 @@ function checkLoadMoreVisibility() {
 
 const brandData = {
     "phone": ["APPLE", "SAMSUNG", "XIAOMI", "VIVO", "OPPO", "REALME", "NOKIA"],
-    "tablet": ["APPLE", "SAMSUNG", "XIAOMI", "LENOVO"],
+    "tablet": ["APPLE", "SAMSUNG", "XIAOMI", "LENOVO", "HUAWEI"],
     "laptop": ["APPLE", "ASUS", "DELL", "HP", "ACER", "MSI"],
     "screen": ["SAMSUNG", "LG", "DELL", "ASUS", "VIEWSONIC"],
     "houseware": ["XIAOMI", "LG", "SAMSUNG", "TOSHIBA", "PANASONIC"],
-    "accessories": ["APPLE", "BASEUS", "ANKER", "LOGITECH"]
+    "accessories": ["APPLE", "BASEUS", "ANKER", "LOGITECH", "MARSHALL"]
 };
 
 export const initBrandMenu = () => {
