@@ -4,6 +4,7 @@ import { initProductList } from './pages/product-list.js';
 import { initAuth } from './pages/auth.js';
 import { initOrderHistory } from './pages/order-history.js';
 import { initUserProfile } from './pages/user-profile.js';
+import { initHome } from './pages/home.js';
 
 $(function () {
     initNavbar();
@@ -20,6 +21,7 @@ $(function () {
         });
     }
 
+    initHome();
     initProductList();
     initAuth();
     initOrderHistory();
