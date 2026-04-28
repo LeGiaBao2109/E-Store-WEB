@@ -24,36 +24,53 @@ const createProductCard = (p, index, isGrid = true) => {
 };
 
 export const initProductList = () => {
+    initBrandMenu();
+
     const $productContainer = $('#product-container');
-    const $productSlider = $('#productSlider'); 
+    const $productSlider = $('#productSlider');
     const $loadMoreBtn = $('#loadMoreBtn');
 
     const allProducts = JSON.parse(localStorage.getItem('products')) || [];
 
     if ($productContainer.length) {
         const path = window.location.pathname;
-        const pathParts = path.split('/');
-        const slug = pathParts[pathParts.length - 1];
+        const pathParts = path.split('/').filter(p => p !== "");
+        const categorySlug = pathParts[pathParts.length - 1];
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const brandFilter = urlParams.get('brand');
 
         let filteredProducts = [];
-        if (slug === 'products' || slug === '' || !slug) {
+
+        if (categorySlug === 'products' || categorySlug === '' || !categorySlug) {
             filteredProducts = allProducts;
         } else {
-            filteredProducts = allProducts.filter(p => p.categorySlug === slug);
+            filteredProducts = allProducts.filter(p => p.categorySlug === categorySlug);
+        }
+
+        if (brandFilter) {
+            filteredProducts = filteredProducts.filter(p =>
+                p.brand && p.brand.toLowerCase() === brandFilter.toLowerCase()
+            );
         }
 
         $productContainer.empty();
-        filteredProducts.forEach((p, index) => {
-            $productContainer.append(createProductCard(p, index, true));
-        });
+        if (filteredProducts.length === 0) {
+            $productContainer.append('<div class="col-12 text-center py-5"><h4 class="text-muted">Không tìm thấy sản phẩm nào thuộc thương hiệu này.</h4></div>');
+        } else {
+            filteredProducts.forEach((p, index) => {
+                $productContainer.append(createProductCard(p, index, true));
+            });
+        }
 
         checkLoadMoreVisibility();
+
         $loadMoreBtn.off('click').on('click', function (e) {
             e.preventDefault();
             const windowWidth = $(window).width();
             let itemsPerRow = windowWidth >= 992 ? 4 : (windowWidth >= 768 ? 3 : 2);
             const itemsToShow = itemsPerRow * 2;
-            
+
             const $hiddenItems = $('.product-item.d-none');
             if ($hiddenItems.length > 0) {
                 $hiddenItems.slice(0, itemsToShow).removeClass('d-none').hide().fadeIn(600);
@@ -67,9 +84,13 @@ export const initProductList = () => {
         allProducts.forEach((p, index) => {
             $productSlider.append(createProductCard(p, index, false));
         });
-        
-        $('.next-btn').off('click').on('click', () => $productSlider.animate({ scrollLeft: '+=300' }, 400));
-        $('.prev-btn').off('click').on('click', () => $productSlider.animate({ scrollLeft: '-=300' }, 400));
+
+        $('.next-btn').off('click').on('click', () => $productSlider.animate({
+            scrollLeft: '+=300'
+        }, 400));
+        $('.prev-btn').off('click').on('click', () => $productSlider.animate({
+            scrollLeft: '-=300'
+        }, 400));
     }
 };
 
@@ -80,3 +101,39 @@ function checkLoadMoreVisibility() {
         $('#loadMoreBtn').show();
     }
 }
+
+const brandData = {
+    "phone": ["APPLE", "SAMSUNG", "XIAOMI", "VIVO", "OPPO", "REALME", "NOKIA"],
+    "tablet": ["APPLE", "SAMSUNG", "XIAOMI", "LENOVO"],
+    "laptop": ["APPLE", "ASUS", "DELL", "HP", "ACER", "MSI"],
+    "screen": ["SAMSUNG", "LG", "DELL", "ASUS", "VIEWSONIC"],
+    "houseware": ["XIAOMI", "LG", "SAMSUNG", "TOSHIBA", "PANASONIC"],
+    "accessories": ["APPLE", "BASEUS", "ANKER", "LOGITECH"]
+};
+
+export const initBrandMenu = () => {
+    const $brandContainer = $('.nav-brands');
+    if (!$brandContainer.length) return;
+
+    const path = window.location.pathname;
+    const pathParts = path.split('/').filter(item => item !== "");
+    const categorySlug = pathParts[pathParts.length - 1];
+
+    const brands = brandData[categorySlug] || [];
+
+    $brandContainer.empty();
+
+    if (brands.length > 0) {
+        brands.forEach(brand => {
+            $brandContainer.append(`
+                <li class="nav-item">
+                    <a class="nav-link text-white fw-bold text-uppercase" href="?brand=${brand.toLowerCase()}">
+                        ${brand}
+                    </a>
+                </li>
+            `);
+        });
+    } else {
+        $brandContainer.append('<li class="nav-item"><span class="nav-link text-white">Tất cả thương hiệu</span></li>');
+    }
+};
