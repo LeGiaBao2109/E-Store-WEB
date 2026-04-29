@@ -50,6 +50,7 @@ export const initProductList = () => {
 
         const urlParams = new URLSearchParams(window.location.search);
         const brandFilter = urlParams.get('brand');
+        const searchKeyword = urlParams.get('search');
 
         const selectedPriceRanges = [];
         $('.price-checkbox:checked').each(function () {
@@ -64,7 +65,19 @@ export const initProductList = () => {
 
         let filtered = allProducts;
 
-        if (categorySlug && categorySlug !== 'products' && categorySlug !== '') {
+        if (searchKeyword) {
+            const lowerKeyword = searchKeyword.toLowerCase();
+            filtered = filtered.filter(p =>
+                p.title.toLowerCase().includes(lowerKeyword) ||
+                p.brand.toLowerCase().includes(lowerKeyword)
+            );
+            const count = filtered.length;
+            $('.section-title').text(`Tìm thấy ${count} sản phẩm cho "${searchKeyword}"`);
+        } else {
+            $('.section-title').text('DANH SÁCH SẢN PHẨM');
+        }
+
+        if (!searchKeyword && categorySlug && categorySlug !== 'products' && categorySlug !== '') {
             filtered = filtered.filter(p => p.categorySlug === categorySlug);
         }
 
@@ -94,10 +107,6 @@ export const initProductList = () => {
     });
 
     $('#sortPrice').on('change', function () {
-        executeFilter();
-    });
-
-    $('.price-checkbox').on('change', function () {
         executeFilter();
     });
 
