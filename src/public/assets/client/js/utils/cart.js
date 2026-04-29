@@ -39,18 +39,32 @@ export const updateCartBadge = () => {
 };
 
 export const addToCart = (productId) => {
-    const cartKey = getCartKey();
+    const userData = localStorage.getItem('currentUser');
+    
+    if (!userData) {
+        alert("Vui lòng đăng nhập để thực hiện chức năng mua sắm!");
+        window.location.href = "/auth";
+        return;
+    }
+
+    const user = JSON.parse(userData);
+    const userId = user._id || user.id;
+    const cartKey = `cart_${userId}`;
+    
     const allProducts = JSON.parse(localStorage.getItem('products')) || [];
     let cart = JSON.parse(localStorage.getItem(cartKey)) || [];
 
     const product = allProducts.find(p => p.id === productId);
+    if (!product) return;
 
-    if (!product) {
-        console.error("Không tìm thấy sản phẩm!");
+    const existingItem = cart.find(item => item.id === productId);
+    const currentQtyInCart = existingItem ? existingItem.quantity : 0;
+
+    if (currentQtyInCart + 1 > product.stock) {
+        alert(`Sản phẩm này hiện chỉ còn ${product.stock} cái trong kho!`);
         return;
     }
 
-    const existingItem = cart.find(item => item.id === productId);
     if (existingItem) {
         existingItem.quantity += 1;
     } else {
@@ -65,9 +79,8 @@ export const addToCart = (productId) => {
     }
 
     localStorage.setItem(cartKey, JSON.stringify(cart));
-    
     updateCartBadge();
-    alert(`Đã thêm ${product.title} vào giỏ hàng!`);
+    alert(`Đã thêm ${product.title} vào giỏ hàng thành công!`);
 };
 
 export const getCartItems = () => {
