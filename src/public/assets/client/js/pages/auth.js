@@ -143,7 +143,6 @@ export function initAuth() {
             phone: $('#regSDT').val().trim(),
             username: $('#regUserName').val().trim(),
             password: hashedPassword,
-            role: 'user',
             createAt: new Date().toISOString()
         }
 
@@ -215,8 +214,10 @@ export function initAuth() {
         if (userFound) {
             const sessionUser = {
                 id: userFound.id,
-                fullname: userFound.fullName,
-                username: userFound.username
+                fullName: userFound.fullName,
+                username: userFound.username,
+                email: userFound.email,
+                phone: userFound.phone
             };
             localStorage.setItem('currentUser', JSON.stringify(sessionUser));
 

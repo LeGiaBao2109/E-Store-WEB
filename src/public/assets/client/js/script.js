@@ -8,6 +8,7 @@ import { initUserProfile } from './pages/user-profile.js';
 import { initHome } from './pages/home.js';
 import { addToCart, updateCartBadge } from './utils/cart.js';
 import { initCart } from './pages/cart.js';
+import { initPayment } from './pages/payment.js';
 
 $(function () {
     initNavbar();
@@ -32,7 +33,11 @@ $(function () {
     initUserProfile();
     initProductDetail();
 
-    if (window.location.pathname.includes('/cart')) {
+    if (window.location.pathname === '/cart/payment' || window.location.pathname.includes('/cart/payment')) {
+        initPayment();
+    } 
+
+    else if (window.location.pathname === '/cart' || window.location.pathname.includes('/cart')) {
         initCart();
     }
 
