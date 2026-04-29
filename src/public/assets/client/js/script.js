@@ -6,9 +6,12 @@ import { initAuth } from './pages/auth.js';
 import { initOrderHistory } from './pages/order-history.js';
 import { initUserProfile } from './pages/user-profile.js';
 import { initHome } from './pages/home.js';
+import { addToCart, updateCartBadge } from './utils/cart.js';
+import { initCart } from './pages/cart.js';
 
 $(function () {
     initNavbar();
+    updateCartBadge();
 
     const productSlider = initProductSlider('productSlider');
     if (productSlider) {
@@ -29,5 +32,17 @@ $(function () {
     initUserProfile();
     initProductDetail();
 
-    console.log("E-Store System Ready!");
+    if (window.location.pathname.includes('/cart')) {
+        initCart();
+    }
+
+    $(document).on('click', '.btn-add-cart', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const productId = $(this).data('id');
+        if (productId) {
+            addToCart(productId);
+        }
+    });
 });

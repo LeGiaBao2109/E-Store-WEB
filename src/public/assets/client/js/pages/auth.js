@@ -192,8 +192,7 @@ export function initAuth() {
         }
     });
 
-    // --- XỬ LÝ ĐĂNG NHẬP (TRANG USER) ---
-    $('#loginForm').on('submit', function (e) {
+  $('#loginForm').on('submit', function (e) {
         e.preventDefault();
 
         const accountInput = $('#loginUser').val().trim();
