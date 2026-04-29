@@ -1,102 +1,120 @@
-// /assets/admin/js/dashboard.js
-let revenueChart, categoryChart;
+export const initDashboardCharts = () => {
+    const $dateFrom = $('#globalDateFrom');
+    const $dateTo = $('#globalDateTo');
+    const $btnFilter = $('#btnGlobalFilter');
+    let myChart = null;
 
-export function initDashboardCharts() {
-    renderRevenueChart();
-    renderCategoryChart();
+    // 1. Hàm bổ trợ: Chuyển chuỗi "15:09:32 29/4/2026" thành đối tượng Date để so sánh
+    const parseOrderDate = (dateStr) => {
+        const [time, datePart] = dateStr.split(' ');
+        const [day, month, year] = datePart.split('/');
+        // Format chuẩn: YYYY-MM-DDThh:mm:ss
+        return new Date(`${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}T${time}`);
+    };
 
-    // Sự kiện khi nhấn nút Lọc
-    $('#btnFilterDate').on('click', function() {
-        renderRevenueChart();
-    });
-}
+    const processDashboard = () => {
+        const allOrders = JSON.parse(localStorage.getItem('order_history')) || [];
+        const products = JSON.parse(localStorage.getItem('products')) || [];
 
-function renderRevenueChart() {
-    const $canvas = $('#revenueChart');
-    if (!$canvas.length) return;
+        const fromDateVal = $dateFrom.val();
+        const toDateVal = $dateTo.val();
 
-    const ctx = $canvas[0].getContext('2d');
-    
-    // Lấy giá trị từ input date
-    const dateFrom = $('#dateFrom').val(); // YYYY-MM-DD
-    const dateTo = $('#dateTo').val();
+        // 2. Chặn lỗi logic: Ngày bắt đầu > Ngày kết thúc
+        if (new Date(fromDateVal) > new Date(toDateVal)) {
+            alert("⚠️ Ngày bắt đầu không thể lớn hơn ngày kết thúc. Vui lòng chọn lại!");
+            setDefaultDates(); // Reset về 7 ngày gần nhất
+            return;
+        }
 
-    // Logic xử lý nhãn (Labels) Ngày/Tháng/Năm
-    // Ở bản demo, mình sẽ tạo ra các mốc ngày dựa trên khoảng chọn
-    let labels = [];
-    if (dateFrom && dateTo) {
-        // Hàm chuyển YYYY-MM-DD sang DD/MM/YYYY
-        const formatDate = (dateStr) => {
-            const [y, m, d] = dateStr.split('-');
-            return `${d}/${m}/${y}`;
-        };
-        
-        // Demo: Hiển thị mốc bắt đầu, mốc giữa và mốc kết thúc
-        labels = [formatDate(dateFrom), '15/04/2026', formatDate(dateTo)];
-    } else {
-        labels = ['01/04/2026', '15/04/2026', '30/04/2026'];
-    }
+        const start = new Date(fromDateVal);
+        start.setHours(0, 0, 0, 0);
+        const end = new Date(toDateVal);
+        end.setHours(23, 59, 59, 999);
 
-    const revenueData = [45, 80, 120]; // Mock data
-    const profitData = [15, 25, 40];
+        // 3. Lọc đơn hàng theo khoảng ngày đã chọn
+        const filteredOrders = allOrders.filter(order => {
+            const orderDate = parseOrderDate(order.date);
+            return orderDate >= start && orderDate <= end;
+        });
 
-    if (revenueChart) revenueChart.destroy();
+        // 4. Tính toán số liệu thống kê
+        const totalRevenue = filteredOrders.reduce((sum, o) => sum + o.totalAmount, 0);
+        const totalStock = products.reduce((sum, p) => sum + p.stock, 0);
 
-    revenueChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Doanh thu (triệu)',
-                data: revenueData,
-                borderColor: '#dc3545',
-                backgroundColor: 'rgba(220, 53, 69, 0.1)',
-                fill: true,
-                tension: 0.4
-            }, {
-                label: 'Lợi nhuận (triệu)',
-                data: profitData,
-                borderColor: '#0d6efd',
-                borderDash: [5, 5],
-                fill: false,
-                tension: 0.4
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { position: 'top', align: 'end' } },
-            scales: {
-                x: {
-                    ticks: { maxRotation: 0 } // Vì khoảng ngày linh hoạt nên để nằm ngang cho đẹp
+        // Đổ dữ liệu ra Card (Dùng toLocaleString cho đúng chuẩn VND)
+        $('#stat-revenue').text(totalRevenue.toLocaleString('vi-VN') + ' VND');
+        $('#stat-stock').text(totalStock.toLocaleString());
+        $('#stat-orders').text(filteredOrders.length);
+
+        // Cập nhật nhãn khoảng thời gian trên biểu đồ
+        $('#chartRangeLabel').text(`Từ ${start.toLocaleDateString('vi-VN')} đến ${end.toLocaleDateString('vi-VN')}`);
+
+        renderChart(filteredOrders);
+    };
+
+    // 5. Vẽ biểu đồ doanh thu theo ngày
+    const renderChart = (data) => {
+        const ctx = document.getElementById('revenueChart').getContext('2d');
+        if (myChart) myChart.destroy();
+
+        // Gom nhóm doanh thu theo từng ngày (để tránh trùng cột nếu 1 ngày có nhiều đơn)
+        const dailyData = {};
+        data.forEach(o => {
+            const dayLabel = o.date.split(' ')[1]; // Lấy phần "29/4/2026"
+            dailyData[dayLabel] = (dailyData[dayLabel] || 0) + o.totalAmount;
+        });
+
+        const labels = Object.keys(dailyData); // Cột ngày
+        const values = Object.values(dailyData); // Tiền tương ứng
+
+        myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels.length > 0 ? labels : ['Không có dữ liệu'],
+                datasets: [{
+                    label: 'Doanh thu',
+                    data: values.length > 0 ? values : [0],
+                    borderColor: '#dc3545',
+                    backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 5,
+                    pointBackgroundColor: '#dc3545'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { 
+                        beginAtZero: true,
+                        ticks: { callback: (value) => value.toLocaleString() + ' đ' }
+                    }
                 },
-                y: { beginAtZero: true, ticks: { callback: v => v + 'M' } }
+                plugins: { legend: { display: false } }
             }
-        }
-    });
-}
+        });
+    };
 
-function renderCategoryChart() {
-    const $canvas = $('#categoryChart');
-    if (!$canvas.length) return;
-    const ctx = $canvas[0].getContext('2d');
+    // 6. Thiết lập mặc định 7 ngày gần nhất
+    const setDefaultDates = () => {
+        const today = new Date();
+        const lastWeek = new Date();
+        lastWeek.setDate(today.getDate() - 7);
 
-    if (categoryChart) categoryChart.destroy();
-    categoryChart = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Điện thoại', 'Laptop', 'Phụ kiện', 'Tablet'],
-            datasets: [{
-                data: [60, 20, 15, 5],
-                backgroundColor: ['#dc3545', '#212529', '#0d6efd', '#ffc107'],
-                borderWidth: 0
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            cutout: '75%',
-            plugins: { legend: { position: 'bottom' } }
-        }
+        // Input date yêu cầu format YYYY-MM-DD
+        $dateTo.val(today.toISOString().split('T')[0]);
+        $dateFrom.val(lastWeek.toISOString().split('T')[0]);
+    };
+
+    // Lắng nghe sự kiện click nút Áp dụng
+    $btnFilter.on('click', (e) => {
+        e.preventDefault();
+        processDashboard();
     });
-}
+
+    // Khởi tạo lần đầu
+    setDefaultDates();
+    processDashboard();
+};
