@@ -389,7 +389,7 @@ export const initProduct = () => {
 
         renderProductTable();
         handleAddNewProduct();
-        handleEditProduct();
+        // handleEditProduct();
         handleDeleteProduct(); 
     };
     
