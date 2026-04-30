@@ -5,28 +5,24 @@ export const initPayment = () => {
     const $subtotalDisplay = $('.order-summary .fw-bold.small.text-dark').first();
     const $vatDisplay = $('.order-summary .fw-bold.small.text-dark').eq(1);
     const $totalAmountDisplay = $('.order-summary .h4.text-danger');
-    const $customerFields = $('.customer-info .col-sm-8'); 
 
     const renderOrderSummary = () => {
         let cart = getCartItems('buy_now');
-        
         if (!cart || cart.length === 0) {
             cart = getCartItems('all');
         }
 
-        const currentUser = JSON.parse(localStorage.getItem('currentUser')) || {}; 
+        const currentUser = JSON.parse(localStorage.getItem('currentUser')) || {};
 
-        if (!currentUser.fullName) {
+        if (!currentUser.email) {
             alert("Vui lòng đăng nhập để tiếp tục!");
             window.location.href = "/auth";
             return;
         }
 
-        if ($customerFields.length >= 3) {
-            $customerFields.eq(0).text(currentUser.fullName || 'Khách hàng');
-            $customerFields.eq(1).text(currentUser.email || 'N/A');
-            $customerFields.eq(2).text(currentUser.phone || 'Chưa cập nhật');
-        }
+        $('#orderFullName').val(currentUser.fullName || '');
+        $('#orderEmail').val(currentUser.email || '');
+        $('#orderPhone').val(currentUser.phone || '');
 
         $orderItemsContainer.empty();
         let subtotal = 0;
@@ -71,14 +67,27 @@ export const initPayment = () => {
     $(document).off('click', 'button[type="submit"]').on('click', 'button[type="submit"]', function(e) {
         e.preventDefault();
         
+        const finalFullName = $('#orderFullName').val().trim();
+        const finalPhone = $('#orderPhone').val().trim();
         const address = $('#fullAddress').val()?.trim();
+
+        if (!finalFullName) {
+            alert("Vui lòng nhập họ tên người nhận!");
+            $('#orderFullName').focus();
+            return;
+        }
+
+        if (!finalPhone) {
+            alert("Vui lòng nhập số điện thoại!");
+            $('#orderPhone').focus();
+            return;
+        }
+
         if (!address) {
             alert("Vui lòng nhập địa chỉ giao hàng!");
             $('#fullAddress').focus();
             return;
         }
-
-        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
 
         if (!window.currentOrderTotal) {
             alert("Lỗi dữ liệu thanh toán. Vui lòng thử lại!");
@@ -86,7 +95,6 @@ export const initPayment = () => {
         }
 
         const { subtotal, vatAmount, finalTotal, items } = window.currentOrderTotal;
-
         let allProducts = JSON.parse(localStorage.getItem('products')) || [];
         let stockError = false;
 
@@ -106,9 +114,11 @@ export const initPayment = () => {
             return;
         }
 
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
         const newOrder = {
             orderId: 'ORD' + Date.now(),
-            customerName: currentUser?.fullName || "Khách hàng",
+            customerName: finalFullName,
+            phone: finalPhone,
             userId: currentUser?.id || currentUser?._id || "guest",
             items: items,
             subtotal: subtotal,
