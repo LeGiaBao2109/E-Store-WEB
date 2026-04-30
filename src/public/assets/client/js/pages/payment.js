@@ -69,10 +69,18 @@ export const initPayment = () => {
 
         const cart = getCartItems();
         const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+
+        if (!currentUser) {
+            alert("Vui lòng đăng nhập để đặt hàng!");
+            window.location.href = "/login";
+            return;
+        }
+
         const { subtotal, vatAmount, finalTotal } = window.currentOrderTotal;
 
         const newOrder = {
             orderId: 'ORD' + Date.now(),
+            userId: currentUser.id,
             customerName: currentUser.fullName,
             items: cart,
             subtotal: subtotal,
