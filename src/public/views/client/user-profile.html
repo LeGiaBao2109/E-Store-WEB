@@ -197,19 +197,22 @@
                     <div class="form-floating mb-3">
                         <input type="text" class="form-control" id="editName" value="Lê Gia Bảo">
                         <label>Họ và tên</label>
+                        <div id="errEditName" class="invalid-feedback"></div>
                     </div>
                     <div class="form-floating mb-3">
                         <input type="email" class="form-control" id="editEmail" value="legiabao@iuh.edu.vn">
                         <label>Email</label>
+                        <div id="errEditEmail" class="invalid-feedback"></div>
                     </div>
                     <div class="form-floating mb-3">
                         <input type="text" class="form-control" id="editPhone" value="0358356268">
                         <label>Số điện thoại</label>
+                        <div id="errEditPhone" class="invalid-feedback"></div>
                     </div>
                     <div class="form-floating">
-                        <textarea class="form-control" id="editAddress"
-                            style="height: 100px">12 đường Mẹ Thiên Tích, Q.5</textarea>
+                        <textarea class="form-control" id="editAddress" style="height: 100px">12 đường Mẹ Thiên Tích, Q.5</textarea>
                         <label>Địa chỉ</label>
+                        <div id="errEditAddress" class="invalid-feedback"></div>
                     </div>
                 </div>
                 <div class="modal-footer border-0">
@@ -229,9 +232,18 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <input type="password" class="form-control mb-2" placeholder="Mật khẩu hiện tại">
-                    <input type="password" class="form-control mb-2" placeholder="Mật khẩu mới">
-                    <input type="password" class="form-control" placeholder="Xác nhận mật khẩu mới">
+                    <div class="mb-3">
+                        <input type="password" id="currentPass" class="form-control" placeholder="Mật khẩu hiện tại">
+                        <div id="errCurrentPass" class="invalid-feedback text-start small"></div>
+                    </div>
+                    <div class="mb-3">
+                        <input type="password" id="newPass" class="form-control" placeholder="Mật khẩu mới">
+                        <div id="errNewPass" class="invalid-feedback text-start small"></div>
+                    </div>
+                    <div class="mb-3">
+                        <input type="password" id="confirmPass" class="form-control" placeholder="Xác nhận mật khẩu mới">
+                        <div id="errConfirmPass" class="invalid-feedback text-start small"></div>
+                    </div>
                 </div>
                 <div class="modal-footer border-0">
                     <button type="button" class="btn btn-danger w-100 rounded-pill fw-bold">Xác nhận đổi</button>
@@ -244,6 +256,7 @@
     <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <script type="module" src="/assets/client/js/script.js"></script>
 </body>
 
