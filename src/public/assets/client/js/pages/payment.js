@@ -2,7 +2,6 @@ import { getCartItems, saveCart, clearTempCart } from '../utils/cart.js';
 
 export const initPayment = () => {
     const $orderItemsContainer = $('.order-items');
-    
     const $subtotalDisplay = $('.order-summary .fw-bold.small.text-dark').first();
     const $vatDisplay = $('.order-summary .fw-bold.small.text-dark').eq(1);
     const $totalAmountDisplay = $('.order-summary .h4.text-danger');
@@ -88,6 +87,25 @@ export const initPayment = () => {
 
         const { subtotal, vatAmount, finalTotal, items } = window.currentOrderTotal;
 
+        let allProducts = JSON.parse(localStorage.getItem('products')) || [];
+        let stockError = false;
+
+        items.forEach(cartItem => {
+            const productIndex = allProducts.findIndex(p => p.id === cartItem.id);
+            if (productIndex !== -1) {
+                if (allProducts[productIndex].stock >= cartItem.quantity) {
+                    allProducts[productIndex].stock -= cartItem.quantity;
+                } else {
+                    stockError = true;
+                }
+            }
+        });
+
+        if (stockError) {
+            alert("Một số sản phẩm đã hết hàng hoặc không đủ số lượng tồn kho!");
+            return;
+        }
+
         const newOrder = {
             orderId: 'ORD' + Date.now(),
             customerName: currentUser?.fullName || "Khách hàng",
@@ -103,6 +121,8 @@ export const initPayment = () => {
         };
 
         try {
+            localStorage.setItem('products', JSON.stringify(allProducts));
+
             let history = JSON.parse(localStorage.getItem('order_history')) || [];
             history.unshift(newOrder);
             localStorage.setItem('order_history', JSON.stringify(history));
@@ -116,7 +136,7 @@ export const initPayment = () => {
             alert("Đặt hàng thành công!");
             window.location.href = "/"; 
         } catch (err) {
-            alert("Không thể lưu đơn hàng. Bộ nhớ trình duyệt đầy!");
+            alert("Không thể hoàn tất đơn hàng. Vui lòng kiểm tra lại!");
         }
     });
 
