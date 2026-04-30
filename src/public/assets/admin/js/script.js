@@ -1,10 +1,12 @@
 import { initDashboardCharts } from './pages/dashboard.js';
 import { initProduct } from './pages/product.js';
+import { initOrderAdmin } from './pages/order.js';
 
 $(function () {
     console.log("Admin Dashboard Ready với jQuery!");
     initDashboardCharts();
     initProduct();
+    initOrderAdmin();
 
     window.switchSubTab = function (target) {
         let tabTriggerEl;
