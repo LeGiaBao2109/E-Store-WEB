@@ -12,7 +12,7 @@ const createProductCard = (p, index, isGrid = true) => {
                     <h6 class="card-title fw-bold text-truncate">${p.title}</h6>
                     <p class="text-danger fw-bold mb-2">${p.price.toLocaleString()}đ</p>
                     <div class="buttons d-flex gap-2">
-                        <a href="/products/detail/${p.slug}" class="btn btn-outline-danger btn-sm rounded-pill w-100 p-2">Mua Ngay</a>
+                        <a href="/products/detail/${p.slug}" class="btn btn-outline-danger btn-sm rounded-pill w-100 p-2">Xem chi tiết</a>
                         <button class="btn btn-danger btn-sm rounded-circle p-2 btn-add-cart" data-id="${p.id}">
                             <i class="bi bi-cart"></i>
                         </button>

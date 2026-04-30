@@ -19,7 +19,7 @@ function getCartKey() {
 
 export const updateCartBadge = () => {
     const userId = getCurrentUserId();
-    if (userId === 'undefined' || !userId) {
+    if (!userId || userId === 'guest' || userId === 'undefined') {
         $('.cart-badge').hide();
         return;
     }
@@ -83,13 +83,26 @@ export const addToCart = (productId) => {
     alert(`Đã thêm ${product.title} vào giỏ hàng thành công!`);
 };
 
-export const getCartItems = () => {
+export const getCartItems = (type = 'all') => {
+    if (type === 'buy_now') {
+        const tempCart = localStorage.getItem('buy_now_temp');
+        return tempCart ? JSON.parse(tempCart) : [];
+    }
+    
     const cartKey = getCartKey();
     return JSON.parse(localStorage.getItem(cartKey)) || [];
 };
 
+export const clearTempCart = () => {
+    localStorage.removeItem('buy_now_temp');
+};
+
 export const saveCart = (cartData) => {
-    const cartKey = getCartKey();
-    localStorage.setItem(cartKey, JSON.stringify(cartData));
+    if (localStorage.getItem('buy_now_temp')) {
+        localStorage.setItem('buy_now_temp', JSON.stringify(cartData));
+    } else {
+        const cartKey = getCartKey();
+        localStorage.setItem(cartKey, JSON.stringify(cartData));
+    }
     updateCartBadge();
 };

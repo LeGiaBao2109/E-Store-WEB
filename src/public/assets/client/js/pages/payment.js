@@ -1,34 +1,45 @@
-import { getCartItems, saveCart } from '../utils/cart.js';
+import { getCartItems, saveCart, clearTempCart } from '../utils/cart.js';
 
 export const initPayment = () => {
     const $orderItemsContainer = $('.order-items');
+    
     const $subtotalDisplay = $('.order-summary .fw-bold.small.text-dark').first();
     const $vatDisplay = $('.order-summary .fw-bold.small.text-dark').eq(1);
     const $totalAmountDisplay = $('.order-summary .h4.text-danger');
-    
     const $customerFields = $('.customer-info .col-sm-8'); 
 
     const renderOrderSummary = () => {
-        const cart = getCartItems();
-        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        let cart = getCartItems('buy_now');
+        
+        if (!cart || cart.length === 0) {
+            cart = getCartItems('all');
+        }
 
-        if (currentUser && $customerFields.length >= 3) {
-            $customerFields.eq(0).text(currentUser.fullName);
-            $customerFields.eq(1).text(currentUser.email);
+        const currentUser = JSON.parse(localStorage.getItem('currentUser')) || {}; 
+
+        if (!currentUser.fullName) {
+            alert("Vui lòng đăng nhập để tiếp tục!");
+            window.location.href = "/auth";
+            return;
+        }
+
+        if ($customerFields.length >= 3) {
+            $customerFields.eq(0).text(currentUser.fullName || 'Khách hàng');
+            $customerFields.eq(1).text(currentUser.email || 'N/A');
             $customerFields.eq(2).text(currentUser.phone || 'Chưa cập nhật');
         }
 
         $orderItemsContainer.empty();
         let subtotal = 0;
 
-        if (cart.length === 0) {
-            alert("Giỏ hàng của bạn đang trống!");
+        if (!cart || cart.length === 0) {
+            alert("Đơn hàng của bạn đang trống!");
             window.location.href = "/";
             return;
         }
 
         cart.forEach((item) => {
-            const itemTotal = item.price * item.quantity;
+            const itemTotal = Number(item.price) * Number(item.quantity);
             subtotal += itemTotal;
 
             $orderItemsContainer.append(`
@@ -38,7 +49,7 @@ export const initPayment = () => {
                             <img src="${item.image}" class="rounded-3 border bg-white" style="width: 70px; height: 70px; object-fit: contain;">
                         </div>
                         <div class="ms-3">
-                            <h6 class="mb-0 fw-bold text-dark">${item.title}</h6>
+                            <h6 class="mb-0 fw-bold text-dark text-truncate" style="max-width: 200px;">${item.title}</h6>
                             <span class="text-muted small">Số lượng: ${item.quantity}</span>
                         </div>
                     </div>
@@ -48,57 +59,65 @@ export const initPayment = () => {
         });
 
         const vatRate = 0.1;
-        const vatAmount = subtotal * vatRate;
+        const vatAmount = Math.round(subtotal * vatRate);
         const finalTotal = subtotal + vatAmount;
 
         $subtotalDisplay.text(`${subtotal.toLocaleString()} đ`);
         $vatDisplay.text(`${vatAmount.toLocaleString()} đ`);
         $totalAmountDisplay.text(`${finalTotal.toLocaleString()} đ`);
 
-        window.currentOrderTotal = { subtotal, vatAmount, finalTotal };
+        window.currentOrderTotal = { subtotal, vatAmount, finalTotal, items: cart };
     };
 
-    $('button[type="submit"]').on('click', function(e) {
+    $(document).off('click', 'button[type="submit"]').on('click', 'button[type="submit"]', function(e) {
         e.preventDefault();
         
-        const address = $('#fullAddress').val().trim();
+        const address = $('#fullAddress').val()?.trim();
         if (!address) {
             alert("Vui lòng nhập địa chỉ giao hàng!");
+            $('#fullAddress').focus();
             return;
         }
 
-        const cart = getCartItems();
         const currentUser = JSON.parse(localStorage.getItem('currentUser'));
 
-        if (!currentUser) {
-            alert("Vui lòng đăng nhập để đặt hàng!");
-            window.location.href = "/login";
+        if (!window.currentOrderTotal) {
+            alert("Lỗi dữ liệu thanh toán. Vui lòng thử lại!");
             return;
         }
 
-        const { subtotal, vatAmount, finalTotal } = window.currentOrderTotal;
+        const { subtotal, vatAmount, finalTotal, items } = window.currentOrderTotal;
 
         const newOrder = {
             orderId: 'ORD' + Date.now(),
-            userId: currentUser.id,
-            customerName: currentUser.fullName,
-            items: cart,
+            customerName: currentUser?.fullName || "Khách hàng",
+            userId: currentUser?.id || currentUser?._id || "guest",
+            items: items,
             subtotal: subtotal,
             vat: vatAmount,
             totalAmount: finalTotal,
             address: address,
-            note: $('#orderNote').val(),
+            note: $('#orderNote').val() || "",
             status: 'Chờ xác nhận',
             date: new Date().toLocaleString('vi-VN')
         };
 
-        let history = JSON.parse(localStorage.getItem('order_history')) || [];
-        history.unshift(newOrder);
-        localStorage.setItem('order_history', JSON.stringify(history));
+        try {
+            let history = JSON.parse(localStorage.getItem('order_history')) || [];
+            history.unshift(newOrder);
+            localStorage.setItem('order_history', JSON.stringify(history));
 
-        saveCart([]); 
-        alert("Đặt hàng thành công!");
-        window.location.href = "/"; 
+            if (localStorage.getItem('buy_now_temp')) {
+                clearTempCart(); 
+            } else {
+                saveCart([]); 
+            }
+
+            alert("Đặt hàng thành công!");
+            window.location.href = "/"; 
+        } catch (err) {
+            alert("Không thể lưu đơn hàng. Bộ nhớ trình duyệt đầy!");
+        }
     });
 
     renderOrderSummary();

@@ -1,3 +1,9 @@
+import {
+    getCartItems,
+    saveCart,
+    updateCartBadge
+} from '../utils/cart.js';
+
 export const initProductDetail = () => {
     const pathParts = window.location.pathname.split('/');
     const slug = pathParts[pathParts.length - 1];
@@ -45,7 +51,7 @@ export const initProductDetail = () => {
                         <button class="btn btn-danger btn-lg rounded-pill px-5 flex-grow-1 flex-md-grow-0 fw-bold btn-buy-now">
                             MUA NGAY
                         </button>
-                        <button class="btn btn-outline-danger btn-lg rounded-circle d-flex align-items-center justify-content-center btn-add-to-cart" 
+                        <button class="btn btn-outline-danger btn-lg rounded-circle d-flex align-items-center justify-content-center btn-add-cart" 
                                 style="width: 56px; height: 56px;" data-id="${product.id}">
                             <i class="bi bi-cart fs-4"></i>
                         </button>
@@ -68,6 +74,38 @@ export const initProductDetail = () => {
 
     $('.product-detail .container').html(detailHtml);
 
+    $(document).off('click', '.btn-buy-now').on('click', '.btn-buy-now', function () {
+        const userData = localStorage.getItem('currentUser');
+        if (!userData) {
+            alert("Vui lòng đăng nhập để mua hàng!");
+            window.location.href = "/auth";
+            return;
+        }
+
+        if (product.stock <= 0) {
+            alert("Sản phẩm đã hết hàng!");
+            return;
+        }
+
+        const buyNowItem = [{
+            id: product.id,
+            title: product.title,
+            price: product.price,
+            image: product.image,
+            slug: product.slug,
+            quantity: 1
+        }];
+
+        localStorage.setItem('buy_now_temp', JSON.stringify(buyNowItem));
+
+        window.location.href = "/cart/payment";
+    });
+
+    $(document).off('click', '.btn-add-cart').on('click', '.btn-add-cart', function () {
+        const productId = $(this).data('id');
+        import('../utils/cart.js').then(module => module.addToCart(productId));
+    });
+
     document.title = `${product.title} | E-STORE`;
 
     if (typeof initRelatedProducts === 'function') {
@@ -79,24 +117,31 @@ const initRelatedProducts = (currentProduct, allProducts) => {
     const $slider = $('#productSlider');
     if (!$slider.length) return;
 
-    const related = allProducts.filter(p => 
+    const related = allProducts.filter(p =>
         p.categorySlug === currentProduct.categorySlug && p.id !== currentProduct.id
     );
 
     $slider.empty();
-    related.forEach(p => {
-        $slider.append(`
-            <div class="product-item" style="min-width: 250px;">
-                <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
-                    <a href="/products/detail/${p.slug}">
-                        <img src="${p.image}" class="card-img-top p-3" alt="${p.title}" style="height: 180px; object-fit: contain;">
-                    </a>
-                    <div class="card-body text-center">
-                        <h6 class="fw-bold text-truncate">${p.title}</h6>
-                        <p class="text-danger fw-bold">${p.price.toLocaleString()}đ</p>
+    related.forEach((p, index) => {
+        const row = `
+        <div class="col-6 col-md-4 col-lg-3 product-item mb-4">
+            <div class="card h-100 shadow-sm border-0 rounded-4">
+                <a href="/products/detail/${p.slug}">
+                    <img src="${p.image}" class="card-img-top p-3" alt="${p.title}" style="height: 180px; object-fit: contain;">
+                </a>
+                <div class="card-body text-center">
+                    <h6 class="card-title fw-bold text-truncate">${p.title}</h6>
+                    <p class="text-danger fw-bold mb-2">${p.price.toLocaleString()}đ</p>
+                    <div class="buttons d-flex gap-2">
+                        <a href="/products/detail/${p.slug}" class="btn btn-outline-danger btn-sm rounded-pill w-100 p-2">Xem chi tiết</a>
+                        <button class="btn btn-danger btn-sm rounded-circle p-2 btn-add-cart" data-id="${p.id}">
+                            <i class="bi bi-cart"></i>
+                        </button>
                     </div>
                 </div>
             </div>
-        `);
+        </div>
+    `;
+        $slider.append(row);
     });
 };

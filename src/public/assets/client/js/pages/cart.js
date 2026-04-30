@@ -1,4 +1,4 @@
-import { updateCartBadge, getCartItems, saveCart } from '../utils/cart.js';
+import { updateCartBadge, getCartItems, saveCart, clearTempCart } from '../utils/cart.js';
 
 export const initCart = () => {
     const $cartTableBody = $('.table tbody');
@@ -138,5 +138,12 @@ export const initCart = () => {
         if (["e", "E", "+", "-", "."].includes(e.key)) e.preventDefault();
     });
 
+    $(document).off('click', '.btn-checkout').on('click', '.btn-checkout', function(e) {
+        e.preventDefault();
+        clearTempCart();
+        window.location.href = "/cart/payment";
+    });
+
+    clearTempCart();
     renderCart();
 };
