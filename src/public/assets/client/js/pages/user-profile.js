@@ -59,7 +59,7 @@ export const initUserProfile = () => {
                             </div>
                         </td>
                         <td><span class="badge ${statusClass} rounded-pill px-3" style="font-size: 11px;">${order.status}</span></td>
-                        <td class="small">${order.date ? order.date.split(' ')[0] : ''}</td>
+                        <td class="small">${order.date ? order.date.split(' ').find(p => p.includes('/') || p.includes('-')) || order.date : ''}</td>
                         <td class="fw-bold text-danger">${(order.totalAmount || 0).toLocaleString('vi-VN')} đ</td>
                         <td class="text-center">
                             <button class="btn btn-sm btn-light border rounded-pill px-3" onclick="viewOrderDetail('${order.orderId}')">Chi tiết</button>
