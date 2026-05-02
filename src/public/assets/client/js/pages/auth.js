@@ -143,6 +143,7 @@
                 phone: $('#regSDT').val().trim(),
                 username: $('#regUserName').val().trim(),
                 password: hashedPassword,
+                status: 'active',
                 createAt: new Date().toISOString()
             }
 
@@ -191,7 +192,7 @@
             }
         });
 
-    $('#loginForm').on('submit', function (e) {
+        $('#loginForm').on('submit', function (e) {
             e.preventDefault();
 
             const accountInput = $('#loginUser').val().trim();
@@ -212,6 +213,10 @@
             );
 
             if (userFound) {
+                if (userFound.status === 'inactive') {
+                    alert("Tài khoản của bạn đã bị khóa!");
+                    return;
+                }
                 const sessionUser = {
                     id: userFound.id,
                     fullName: userFound.fullName,

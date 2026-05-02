@@ -380,7 +380,9 @@
                                                                 placeholder="Ghi chú (VD: Nhập hàng mới)...">
                                                         </div>
                                                         <div class="col-md-2">
-                                                            <button id="btnUpdateWarehouse" class="btn btn-dark w-100 rounded-3 fw-bold">Ghi sổ kho</button>
+                                                            <button id="btnUpdateWarehouse"
+                                                                class="btn btn-dark w-100 rounded-3 fw-bold">Ghi sổ
+                                                                kho</button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -470,6 +472,14 @@
                         </div>
 
                         <div class="tab-pane fade" id="content-orders" role="tabpanel">
+                            <div
+                                class="d-flex flex-column flex-md-row justify-content-between align-items-md-center border-bottom pb-3 mb-4 gap-3">
+                                <h4 class="fw-bold mb-0">Quản lý đơn hàng</h4>
+                                <button class="btn btn-outline-dark rounded-3 btn-sm-block" id="btnExportOrder">
+                                    <i class="bi bi-file-earmark-excel me-1"></i> Xuất Excel
+                                </button>
+                            </div>
+
                             <div class="row g-2 mb-4">
                                 <div class="col-12 col-md-4 col-lg-3">
                                     <select class="form-select border-0 shadow-sm rounded-3" id="filterOrderStatus">
@@ -600,12 +610,13 @@
                                                     hoạt động</span>
                                             </td>
                                             <td class="text-end">
-                                                <button class="btn btn-sm btn-light border-0 me-2"
-                                                    onclick="editCustomer('USER_ID_1')">
+                                                <button class="btn btn-sm btn-light border-0 me-2 btn-edit-customer"
+                                                    data-id="1777449877685">
                                                     <i class="bi bi-pencil-square text-primary"></i> Sửa
                                                 </button>
-                                                <button class="btn btn-sm btn-light border-0"
-                                                    onclick="toggleUserStatus('USER_ID_1', 'active')">
+
+                                                <button class="btn btn-sm btn-light border-0 btn-toggle-status"
+                                                    data-id="1777449877685">
                                                     <i class="bi bi-lock text-danger"></i> Khóa
                                                 </button>
                                             </td>
@@ -624,8 +635,6 @@
                                                 <h6 class="mb-0 fw-bold">Lê Gia Bảo</h6>
                                                 <span class="badge bg-success-subtle text-success small">Active</span>
                                             </div>
-                                            <button class="btn btn-sm btn-light" onclick="toggleUserStatus('...')"><i
-                                                    class="bi bi-three-dots-vertical"></i></button>
                                         </div>
                                         <div class="small mb-2">
                                             <p class="mb-1"><i class="bi bi-envelope me-2"></i>bao.le@gmail.com</p>
@@ -635,14 +644,14 @@
                                         <div class="d-block d-md-none">
                                             <div class="card border-0 shadow-sm rounded-4 p-3 mb-3">
                                                 <div class="d-flex gap-2 mt-3">
-                                                    <button class="btn btn-outline-primary btn-sm rounded-3 flex-fill"
-                                                        onclick="editCustomer('USER_ID_1')">
-                                                        <i class="bi bi-pencil-square me-1"></i> Chỉnh sửa
-                                                    </button>
-                                                    <button class="btn btn-outline-danger btn-sm rounded-3 flex-fill"
-                                                        onclick="toggleUserStatus('USER_ID_1', 'active')">
-                                                        <i class="bi bi-lock me-1"></i> Khóa
-                                                    </button>
+                                                    <div class="modal-footer border-0 p-4 pt-0">
+                                                        <button class="btn btn-light rounded-pill px-4"
+                                                            data-bs-dismiss="modal">Hủy</button>
+                                                        <button id="btnSaveCustomer"
+                                                            class="btn btn-danger rounded-pill px-4 fw-bold shadow-sm">
+                                                            Cập nhật ngay
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -668,7 +677,7 @@
                 <div class="modal-body p-4">
                     <div class="row g-4">
                         <div class="col-md-6">
-                            <h6 class="fw-bold mb-3 text-uppercase small text-muted">Thông tin khách hàng</h6>
+                            <h6 class="fw-bold mb-3 text-uppercase small text-muted">Thông định khách hàng</h6>
                             <div class="card bg-light border-0 rounded-4 p-3">
                                 <p class="mb-2 fw-bold">Người nhận: <span class="fw-normal" id="detailCustomerName">Đang
                                         tải...</span></p>
@@ -682,9 +691,9 @@
                         <div class="col-md-6">
                             <h6 class="fw-bold mb-3 text-uppercase small text-muted">Tiến độ đơn hàng</h6>
                             <div
-                                class="card bg-light border-0 rounded-4 p-3 d-flex flex-column justify-content-center">
+                                class="card bg-light border-0 rounded-4 p-3 d-flex flex-column justify-content-center h-100">
                                 <div class="d-flex align-items-center justify-content-between">
-                                    <span class="fw-bold">Trạng thái đơn hàng:</span>
+                                    <span class="fw-bold">Trạng thái hiện tại:</span>
                                     <span id="currentOrderStatusBadge"
                                         class="badge rounded-pill px-3 py-2 fs-6 bg-secondary">Đang tải...</span>
                                 </div>
@@ -709,7 +718,7 @@
                                     </tbody>
                                     <tfoot class="bg-light">
                                         <tr>
-                                            <td colspan="3" class="text-end fw-bold py-2">TỔNG CỘNG(VAT 10%):</td>
+                                            <td colspan="3" class="text-end fw-bold py-2">TỔNG CỘNG:</td>
                                             <td class="text-end fw-bold text-danger fs-5 pe-3 py-2"
                                                 id="detailOrderTotal">0đ</td>
                                         </tr>
@@ -896,10 +905,14 @@
                         <input type="hidden" id="editUserId">
                         <div class="row g-3">
                             <div class="col-12">
+                                <label class="small fw-bold mb-1">Email (Định danh)</label>
+                                <input type="text" id="editCustomerEmail"
+                                    class="form-control border-0 bg-secondary-subtle shadow-none">
+                            </div>
+                            <div class="col-12">
                                 <label class="small fw-bold mb-1">Họ và tên</label>
                                 <input type="text" id="editCustomerName"
-                                    class="form-control border-0 bg-light shadow-none"
-                                    placeholder="Nhập tên khách hàng...">
+                                    class="form-control border-0 bg-light shadow-none">
                             </div>
                             <div class="col-md-6">
                                 <label class="small fw-bold mb-1">Số điện thoại</label>
@@ -910,7 +923,7 @@
                                 <label class="small fw-bold mb-1">Trạng thái</label>
                                 <select id="editCustomerStatus" class="form-select border-0 bg-light shadow-none">
                                     <option value="active">Đang hoạt động (Active)</option>
-                                    <option value="block">Khóa tài khoản (Block)</option>
+                                    <option value="inactive">Khóa tài khoản (Block)</option>
                                 </select>
                             </div>
                             <div class="col-12">
@@ -918,19 +931,12 @@
                                 <textarea id="editCustomerAddress" class="form-control border-0 bg-light shadow-none"
                                     rows="3"></textarea>
                             </div>
-                            <div class="col-12">
-                                <div class="p-3 bg-warning-subtle rounded-3 small">
-                                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                                    Email và Username là định danh duy nhất (Unique), không được phép chỉnh sửa để bảo
-                                    mật hệ thống.
-                                </div>
-                            </div>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer border-0 p-4 pt-0">
                     <button class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Hủy</button>
-                    <button class="btn btn-danger rounded-pill px-4 fw-bold shadow-sm" onclick="saveCustomerEdit()">Cập
+                    <button id="btnSubmitEditCustomer" class="btn btn-danger rounded-pill px-4 fw-bold shadow-sm">Cập
                         nhật ngay</button>
                 </div>
             </div>

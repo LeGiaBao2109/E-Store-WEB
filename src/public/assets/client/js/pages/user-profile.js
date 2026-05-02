@@ -3,83 +3,93 @@ import { getCartItems } from '../utils/cart.js';
 export const initUserProfile = () => {
     const renderData = () => {
         const userStr = localStorage.getItem('currentUser');
-        if (!userStr) {
-            window.location.href = "/";
+        
+        if (!userStr || userStr === "null") {
+            window.location.replace("/");
             return;
         }
 
-        const currentUser = JSON.parse(userStr);
+        try {
+            const currentUser = JSON.parse(userStr);
 
-        $('#display-name').text(currentUser.fullName || "Chưa cập nhật");
-        $('#u-username').text(currentUser.username || "Chưa cập nhật");
-        $('#u-email').text(currentUser.email || "Chưa cập nhật");
-        $('#u-phone').text(currentUser.phone || "Chưa cập nhật");
-        $('#u-address').text(currentUser.address || "Chưa cập nhật");
+            $('#display-name').text(currentUser.fullName || "Chưa cập nhật");
+            $('#u-username').text(currentUser.username || "Chưa cập nhật");
+            $('#u-email').text(currentUser.email || "Chưa cập nhật");
+            $('#u-phone').text(currentUser.phone || "Chưa cập nhật");
+            $('#u-address').text(currentUser.address || "Chưa cập nhật");
 
-        $('#editName').val(currentUser.fullName || "");
-        $('#editEmail').val(currentUser.email || "");
-        $('#editPhone').val(currentUser.phone || "");
-        $('#editAddress').val(currentUser.address || "");
+            $('#editName').val(currentUser.fullName || "");
+            $('#editEmail').val(currentUser.email || "");
+            $('#editPhone').val(currentUser.phone || "");
+            $('#editAddress').val(currentUser.address || "");
 
-        const allOrders = JSON.parse(localStorage.getItem('order_history')) || [];
-        const myOrders = allOrders.filter(order => order.userId === (currentUser.id || currentUser._id));
+            const allOrders = JSON.parse(localStorage.getItem('order_history')) || [];
+            const currentId = currentUser.id || currentUser._id;
+            const myOrders = allOrders.filter(order => String(order.userId) === String(currentId));
 
-        $('.badge.bg-danger').text(`${myOrders.length} đơn hàng`);
+            $('.badge.bg-danger').text(`${myOrders.length} đơn hàng`);
 
-        const $tbody = $('table tbody');
-        $tbody.empty();
+            const $tbody = $('table tbody');
+            $tbody.empty();
 
-        if (myOrders.length === 0) {
-            $tbody.append('<tr><td colspan="6" class="text-center py-4 text-muted">Bạn chưa có đơn hàng nào.</td></tr>');
-        } else {
-            myOrders.forEach((order, index) => {
-                const firstItem = order.items[0] || { title: 'Sản phẩm' };
-                const otherItemsCount = order.items.length - 1;
-                const productDisplay = otherItemsCount > 0 ?
-                    `${firstItem.title} <br> <small class="text-muted">+ ${otherItemsCount} sản phẩm khác</small>` :
-                    firstItem.title;
+            if (myOrders.length === 0) {
+                $tbody.append('<tr><td colspan="6" class="text-center py-4 text-muted">Bạn chưa có đơn hàng nào.</td></tr>');
+            } else {
+                myOrders.forEach((order, index) => {
+                    const firstItem = (order.items && order.items[0]) ? order.items[0] : { title: 'Sản phẩm' };
+                    const otherItemsCount = (order.items) ? order.items.length - 1 : 0;
+                    
+                    const productDisplay = otherItemsCount > 0 ?
+                        `${firstItem.title} <br> <small class="text-muted">+ ${otherItemsCount} sản phẩm khác</small>` :
+                        firstItem.title;
 
-                const statusMap = {
-                    'Chờ xác nhận': 'bg-warning text-dark',
-                    'Đang giao': 'bg-info text-white',
-                    'Hoàn thành': 'bg-success text-white',
-                    'Đã hủy': 'bg-secondary text-white'
-                };
-                const statusClass = statusMap[order.status] || 'bg-light text-dark';
+                    const statusMap = {
+                        'Chờ xác nhận': 'bg-warning text-dark',
+                        'Đang giao': 'bg-info text-white',
+                        'Hoàn thành': 'bg-success text-white',
+                        'Đã hủy': 'bg-secondary text-white'
+                    };
+                    const statusClass = statusMap[order.status] || 'bg-light text-dark';
 
-                const row = `
-                    <tr>
-                        <td>${index + 1}</td>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <div>
-                                    <div class="fw-bold small">${productDisplay}</div>
-                                    <div class="text-muted" style="font-size: 10px;">Mã đơn: ${order.orderId}</div>
+                    const row = `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div>
+                                        <div class="fw-bold small">${productDisplay}</div>
+                                        <div class="text-muted" style="font-size: 10px;">Mã đơn: ${order.orderId}</div>
+                                    </div>
                                 </div>
-                            </div>
-                        </td>
-                        <td><span class="badge ${statusClass} rounded-pill px-3" style="font-size: 11px;">${order.status}</span></td>
-                        <td class="small">${order.date ? order.date.split(' ').find(p => p.includes('/') || p.includes('-')) || order.date : ''}</td>
-                        <td class="fw-bold text-danger">${(order.totalAmount || 0).toLocaleString('vi-VN')} đ</td>
-                        <td class="text-center">
-                            <button class="btn btn-sm btn-light border rounded-pill px-3" onclick="viewOrderDetail('${order.orderId}')">Chi tiết</button>
-                        </td>
-                    </tr>
-                `;
-                $tbody.append(row);
-            });
+                            </td>
+                            <td><span class="badge ${statusClass} rounded-pill px-3" style="font-size: 11px;">${order.status}</span></td>
+                            <td class="small">${order.date || ''}</td>
+                            <td class="fw-bold text-danger">${(order.totalAmount || 0).toLocaleString('vi-VN')} đ</td>
+                            <td class="text-center">
+                                <button class="btn btn-sm btn-light border rounded-pill px-3" onclick="viewOrderDetail('${order.orderId}')">Chi tiết</button>
+                            </td>
+                        </tr>
+                    `;
+                    $tbody.append(row);
+                });
+            }
+        } catch (error) {
+            console.error("Lỗi render dữ liệu profile:", error);
+            window.location.replace("/");
         }
     };
 
     $('#btnLogout').off('click').on('click', function (e) {
         e.preventDefault();
+        e.stopImmediatePropagation();
+        
         if (confirm("Bạn có chắc muốn đăng xuất không?")) {
             localStorage.removeItem('currentUser');
-            window.location.href = "/";
+            window.location.replace("/");
         }
     });
 
-    $("#editName").on('blur', function () {
+    $("#editName").off('blur').on('blur', function () {
         const value = $(this).val().trim();
         const $err = $('#errEditName');
         const regexName = /^[A-ZÀ-Ỹ][a-zà-ỹ]*(\s[A-ZÀ-Ỹ][a-zà-ỹ]*)+$/u;
@@ -96,7 +106,8 @@ export const initUserProfile = () => {
         }
     });
 
-    $('#editPhone').on('blur', function () {
+    // Validation số điện thoại
+    $('#editPhone').off('blur').on('blur', function () {
         const value = $(this).val().replace(/[\s.-]/g, '');
         const $err = $('#errEditPhone');
         const regexSDT = /^(03|05|07|08|09)([0-9]{8})$/;
@@ -113,6 +124,7 @@ export const initUserProfile = () => {
         }
     });
 
+    // Cập nhật thông tin cá nhân
     $('#modalUpdate .btn-danger').off('click').on('click', function (e) {
         e.preventDefault();
         $('#editName, #editPhone').trigger('blur');
@@ -132,7 +144,9 @@ export const initUserProfile = () => {
                 address: $('#editAddress').val().trim()
             };
 
-            const userIndex = users.findIndex(u => (u.id || u._id) === (currentUser.id || currentUser._id));
+            const currentId = currentUser.id || currentUser._id;
+            const userIndex = users.findIndex(u => String(u.id || u._id) === String(currentId));
+            
             if (userIndex !== -1) {
                 users[userIndex] = { ...users[userIndex], ...updatedData };
                 localStorage.setItem('users', JSON.stringify(users));
@@ -143,12 +157,18 @@ export const initUserProfile = () => {
 
             alert("Thông tin cá nhân đã được lưu thành công!");
             $('.form-control').removeClass('is-valid is-invalid');
-            $('#modalUpdate').modal('hide');
+            
+            // Đóng modal bằng Bootstrap API
+            const modalEl = document.getElementById('modalUpdate');
+            const modalInstance = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+            modalInstance.hide();
+            
             renderData();
         }
     });
 
-    $('#currentPass').on('blur', function () {
+    // Validation đổi mật khẩu
+    $('#currentPass').off('blur').on('blur', function () {
         const $err = $('#errCurrentPass');
         if ($(this).val() === "") {
             $err.text("Mật khẩu hiện tại không được để trống");
@@ -159,7 +179,7 @@ export const initUserProfile = () => {
         }
     });
 
-    $('#newPass').on('blur', function () {
+    $('#newPass').off('blur').on('blur', function () {
         const pass = $(this).val();
         const currentPass = $('#currentPass').val();
         const $err = $('#errNewPass');
@@ -180,7 +200,7 @@ export const initUserProfile = () => {
         }
     });
 
-    $('#confirmPass').on('blur', function () {
+    $('#confirmPass').off('blur').on('blur', function () {
         const $err = $('#errConfirmPass');
         if ($(this).val() === "") {
             $err.text("Vui lòng nhập lại mật khẩu mới");
@@ -194,6 +214,7 @@ export const initUserProfile = () => {
         }
     });
 
+    // Xử lý đổi mật khẩu
     $('#modalPass .btn-danger').off('click').on('click', function (e) {
         e.preventDefault();
         $('#currentPass, #newPass, #confirmPass').trigger('blur');
@@ -202,7 +223,8 @@ export const initUserProfile = () => {
 
         const sessionUser = JSON.parse(localStorage.getItem('currentUser'));
         const users = JSON.parse(localStorage.getItem('users')) || [];
-        const userIndex = users.findIndex(u => (u.id || u._id) === (sessionUser.id || sessionUser._id));
+        const currentId = sessionUser.id || sessionUser._id;
+        const userIndex = users.findIndex(u => String(u.id || u._id) === String(currentId));
 
         if (userIndex !== -1) {
             const hashedCurrentPass = CryptoJS.SHA256($('#currentPass').val()).toString();
@@ -217,7 +239,10 @@ export const initUserProfile = () => {
 
             alert("Đổi mật khẩu thành công!");
             $('#currentPass, #newPass, #confirmPass').val('').removeClass('is-valid is-invalid');
-            $('#modalPass').modal('hide');
+            
+            const modalEl = document.getElementById('modalPass');
+            const modalInstance = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+            modalInstance.hide();
         }
     });
 

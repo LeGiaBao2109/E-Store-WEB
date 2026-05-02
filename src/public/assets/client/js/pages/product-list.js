@@ -65,6 +65,8 @@ export const initProductList = () => {
 
         let filtered = allProducts;
 
+        filtered = filtered.filter(p => p.status === 'active');
+
         if (searchKeyword) {
             const lowerKeyword = searchKeyword.toLowerCase();
             filtered = filtered.filter(p =>
@@ -122,7 +124,8 @@ export const initProductList = () => {
     }
 
     if ($productSlider.length) {
-        renderProductsToContainer(allProducts, $productSlider, false);
+        const activeProducts = allProducts.filter(p => p.status === 'active');
+        renderProductsToContainer(activeProducts, $productSlider, false);
         $('.next-btn').off('click').on('click', () => $productSlider.animate({
             scrollLeft: '+=300'
         }, 100));

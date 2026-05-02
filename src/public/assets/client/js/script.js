@@ -5,49 +5,46 @@ import { initProductDetail } from './pages/product-detail.js';
 import { initAuth } from './pages/auth.js';
 import { initOrderHistory } from './pages/order-history.js';
 import { initUserProfile } from './pages/user-profile.js';
-import { initHome } from './pages/home.js';
+import { initHome, checkUserStatus } from './pages/home.js';
 import { addToCart, updateCartBadge } from './utils/cart.js';
 import { initCart } from './pages/cart.js';
 import { initPayment } from './pages/payment.js';
 
 $(function () {
+    checkUserStatus();
     initNavbar();
     updateCartBadge();
-
-    const productSlider = initProductSlider('productSlider');
-    if (productSlider) {
-        $('.next-btn').on('click', function(e) {
-            e.preventDefault();
-            productSlider.slide(1);
-        });
-        $('.prev-btn').on('click', function(e) {
-            e.preventDefault();
-            productSlider.slide(-1);
-        });
-    }
-
     initHome();
-    initProductList();
-    initAuth();
-    initOrderHistory();
-    initUserProfile();
-    initProductDetail();
 
-    if (window.location.pathname === '/cart/payment' || window.location.pathname.includes('/cart/payment')) {
+    const path = window.location.pathname;
+
+
+        const productSlider = initProductSlider('productSlider');
+        if (productSlider) {
+            $('.next-btn').on('click', e => { e.preventDefault(); productSlider.slide(1); });
+            $('.prev-btn').on('click', e => { e.preventDefault(); productSlider.slide(-1); });
+        }
+        initProductList();
+    if (path.includes('/auth')) {
+        initAuth();
+    } 
+    else if (path.includes('/user-profile')) {
+        initUserProfile();
+        initOrderHistory();
+    } 
+    else if (path.includes('/product-detail')) {
+        initProductDetail();
+    }
+    else if (path.includes('/cart/payment')) {
         initPayment();
     } 
-
-    else if (window.location.pathname === '/cart' || window.location.pathname.includes('/cart')) {
+    else if (path.includes('/cart')) {
         initCart();
     }
 
     $(document).on('click', '.btn-add-cart', function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        
+        e.preventDefault(); e.stopPropagation();
         const productId = $(this).data('id');
-        if (productId) {
-            addToCart(productId);
-        }
+        if (productId) addToCart(productId);
     });
 });

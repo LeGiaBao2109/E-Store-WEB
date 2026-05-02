@@ -1,20 +1,21 @@
 import { initDashboardCharts } from './pages/dashboard.js';
 import { initProduct } from './pages/product.js';
 import { initOrderAdmin } from './pages/order.js';
+import { initCustomerManagement } from './pages/customer.js';
 
 $(function () {
     initDashboardCharts();
     initProduct();
     initOrderAdmin();
-
-    // const getCurrentAdminName = () => {
-    //     const user = JSON.parse(localStorage.getItem('currentUser'));
-    //     return user ? user.fullName : 'Quản trị viên';
-    // };
+    initCustomerManagement();
 
     window.switchSubTab = function (target) {
-        let tabTarget = target === 'price' ? '#subtab-price' : '#subtab-warehouse';
-        const tabTriggerEl = document.querySelector(`button[data-bs-target="${tabTarget}"]`);
+        let tabTriggerEl;
+        if (target === 'price') {
+            tabTriggerEl = document.querySelector('button[data-bs-target="#subtab-price"]');
+        } else if (target === 'warehouse') {
+            tabTriggerEl = document.querySelector('button[data-bs-target="#subtab-warehouse"]');
+        }
         if (tabTriggerEl) {
             const tab = new bootstrap.Tab(tabTriggerEl);
             tab.show();
@@ -29,42 +30,50 @@ $(function () {
         }
     };
 
+    window.viewOrderDetail = function (orderId) {
+        $('#detailOrderId').text(orderId);
+    };
+
+    window.saveOrderChange = function () {
+        const status = $('#updateStatusSelect').val();
+        const isPaid = $('#paymentStatusSwitch').is(':checked');
+
+        alert("Cập nhật trạng thái đơn hàng thành công!");
+        const modal = bootstrap.Modal.getInstance(document.getElementById('modalOrderDetail'));
+        if (modal) modal.hide();
+    };
+
+    window.printOrderBill = function () {
+        const orderId = $('#detailOrderId').text();
+        const customerName = "Khách hàng hệ thống";
+        const total = 0; 
+
+        $('#p-order-id').text(orderId);
+        $('#p-date').text(new Date().toLocaleDateString('vi-VN'));
+        $('#p-name').text(customerName);
+        $('#p-total').text(total.toLocaleString() + 'đ');
+
+        window.print();
+    };
+
     $('#btnGlobalFilter').on('click', function () {
         const fromDate = $('#globalDateFrom').val();
         const toDate = $('#globalDateTo').val();
-        console.log(`Đang lọc dữ liệu toàn hệ thống từ ${fromDate} đến ${toDate}`);
+        console.log(`Lọc dữ liệu từ ${fromDate} đến ${toDate}`);
     });
 
-    window.toggleUserStatus = function (userId, currentStatus) {
-        const action = currentStatus === 'active' ? 'khoá' : 'mở khoá';
-        if (confirm(`Bạn có chắc chắn muốn ${action} tài khoản này?`)) {
-            alert(`Đã ${action} thành công!`);
-        }
-    };
-
-    window.editCustomer = function (userId) {
-        const allUsers = JSON.parse(localStorage.getItem('users')) || [];
-        const user = allUsers.find(u => String(u.id) === String(userId));
-
-        if (user) {
-            $('#editUserId').val(user.id);
-            $('#editCustomerName').val(user.fullName);
-            $('#editCustomerPhone').val(user.phone);
-            $('#editCustomerStatus').val(user.status || 'active');
-            $('#editCustomerAddress').val(user.address || '');
-        }
-
-        const modal = new bootstrap.Modal(document.getElementById('modalEditCustomer'));
-        modal.show();
-    };
-
     window.saveCustomerEdit = function () {
-        const name = $('#editCustomerName').val();
-        if (!name) {
-            alert("Tên khách hàng không được để trống!");
-            return;
+        $('#btnSubmitEditCustomer').trigger('click');
+    };
+
+    window.updateWarehouse = function() {
+        if (typeof window.updateWarehouseLogic === 'function') {
+            window.updateWarehouseLogic();
+        } else {
+            const btn = document.querySelector('button[onclick="updateWarehouse()"]');
+            if (btn) {
+                $(btn).trigger('click');
+            }
         }
-        alert("Cập nhật thông tin khách hàng thành công!");
-        $('#modalEditCustomer').modal('hide');
     };
 });
