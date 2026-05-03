@@ -9,6 +9,8 @@ import { initHome, checkUserStatus } from './pages/home.js';
 import { addToCart, updateCartBadge } from './utils/cart.js';
 import { initCart } from './pages/cart.js';
 import { initPayment } from './pages/payment.js';
+import { initNews } from './pages/news.js';
+import { initNewsDetail } from './pages/news-detail.js';
 
 $(function () {
     checkUserStatus();
@@ -43,6 +45,15 @@ $(function () {
         initUserProfile();
         initOrderHistory();
     }
+    // PHẢI ĐƯA DETAIL LÊN TRƯỚC
+    else if (path.includes('/news/detail/')) {
+        initNewsDetail();
+    }
+    // RỒI MỚI ĐẾN TRANG DANH SÁCH NEWS
+    else if (path.includes('/news')) {
+        initNews();
+    }
+    
     $(document).off('click', '.btn-add-cart').on('click', '.btn-add-cart', function (e) {
         e.preventDefault(); 
         e.stopPropagation();
