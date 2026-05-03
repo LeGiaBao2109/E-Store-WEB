@@ -2,12 +2,14 @@ import { initDashboardCharts } from './pages/dashboard.js';
 import { initProduct } from './pages/product.js';
 import { initOrderAdmin } from './pages/order.js';
 import { initCustomerManagement } from './pages/customer.js';
+import { initNews } from './pages/news.js';
 
 $(function () {
     initDashboardCharts();
     initProduct();
     initOrderAdmin();
     initCustomerManagement();
+    initNews();
 
     window.switchSubTab = function (target) {
         let tabTriggerEl;

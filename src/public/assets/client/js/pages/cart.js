@@ -1,4 +1,4 @@
-import { updateCartBadge, getCartItems, saveCart, clearTempCart } from '../utils/cart.js';
+import { updateCartBadge, getCartItems, saveCart } from '../utils/cart.js';
 
 export const initCart = () => {
     const $cartTableBody = $('.table tbody');
@@ -119,7 +119,6 @@ export const initCart = () => {
         let val = parseInt($(this).val());
 
         if (isNaN(val) || val < 1) val = 1;
-        
         if (val > stock) {
             alert(`Kho hàng hiện tại chỉ còn ${stock} sản phẩm.`);
             val = stock;
@@ -140,10 +139,9 @@ export const initCart = () => {
 
     $(document).off('click', '.btn-checkout').on('click', '.btn-checkout', function(e) {
         e.preventDefault();
-        clearTempCart();
+        localStorage.removeItem('buy_now_temp');
         window.location.href = "/cart/payment";
     });
 
-    clearTempCart();
     renderCart();
 };

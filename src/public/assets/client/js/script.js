@@ -14,36 +14,38 @@ $(function () {
     checkUserStatus();
     initNavbar();
     updateCartBadge();
-    initHome();
 
     const path = window.location.pathname;
 
-
+    if (path === '/') {
+        initHome();
+        initProductList();
+        
         const productSlider = initProductSlider('productSlider');
         if (productSlider) {
-            $('.next-btn').on('click', e => { e.preventDefault(); productSlider.slide(1); });
-            $('.prev-btn').on('click', e => { e.preventDefault(); productSlider.slide(-1); });
+            $('.next-btn').off('click').on('click', e => { e.preventDefault(); productSlider.slide(1); });
+            $('.prev-btn').off('click').on('click', e => { e.preventDefault(); productSlider.slide(-1); });
         }
-        initProductList();
-    if (path.includes('/auth')) {
-        initAuth();
     } 
-    else if (path.includes('/user-profile')) {
-        initUserProfile();
-        initOrderHistory();
-    } 
-    else if (path.includes('/product-detail')) {
+    else if (path.includes('/products/detail/')) {
         initProductDetail();
-    }
+    } 
     else if (path.includes('/cart/payment')) {
         initPayment();
     } 
     else if (path.includes('/cart')) {
         initCart();
+    } 
+    else if (path.includes('/auth')) {
+        initAuth();
+    } 
+    else if (path.includes('/user-profile') || path.includes('/order-history')) {
+        initUserProfile();
+        initOrderHistory();
     }
-
-    $(document).on('click', '.btn-add-cart', function (e) {
-        e.preventDefault(); e.stopPropagation();
+    $(document).off('click', '.btn-add-cart').on('click', '.btn-add-cart', function (e) {
+        e.preventDefault(); 
+        e.stopPropagation();
         const productId = $(this).data('id');
         if (productId) addToCart(productId);
     });

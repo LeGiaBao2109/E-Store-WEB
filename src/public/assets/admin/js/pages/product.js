@@ -2,7 +2,7 @@ export const initProduct = () => {
     const $productTableBody = $('#productTableBody');
 
     const getProducts = () => JSON.parse(localStorage.getItem('products')) || [];
-    
+
     const getCurrentAdminName = () => {
         const user = JSON.parse(localStorage.getItem('currentUser'));
         return user ? user.fullName : 'Quản trị viên';
@@ -107,7 +107,12 @@ export const initProduct = () => {
             "phu-kien": ["APPLE", "BASEUS", "ANKER", "LOGITECH", "MARSHALL"]
         };
 
-        $('#addCategory').on('change', function() {
+        $('#addImageUrl').on('input', function () {
+            const url = $(this).val().trim();
+            $('#addImgPreview').attr('src', url || 'https://via.placeholder.com/150');
+        });
+
+        $('#addCategory').on('change', function () {
             const selectedCategory = $(this).val();
             const brands = brandData[selectedCategory] || [];
             const $brandSelect = $('#addBrand');
@@ -117,19 +122,39 @@ export const initProduct = () => {
 
         $('#addCategory').trigger('change');
 
-        $('#btnSaveNewProduct').off('click').on('click', function(e) {
+        $('#btnSaveNewProduct').off('click').on('click', function (e) {
             e.preventDefault();
-            
+
             const title = $('#addProductName').val().trim();
             const image = $('#addImageUrl').val().trim();
             const price = $('#addInitialPrice').val();
             const stock = $('#addStock').val();
 
             let isValid = true;
-            if (!title) { showError($('#addProductName'), 'Tên không được để trống'); isValid = false; } else { showSuccess($('#addProductName')); }
-            if (!image) { showError($('#addImageUrl'), 'Link ảnh không được để trống'); isValid = false; } else { showSuccess($('#addImageUrl')); }
-            if (!price || price <= 0) { showError($('#addInitialPrice'), 'Giá phải > 0'); isValid = false; } else { showSuccess($('#addInitialPrice')); }
-            if (stock === '' || stock < 0) { showError($('#addStock'), 'Số lượng không hợp lệ'); isValid = false; } else { showSuccess($('#addStock')); }
+            if (!title) {
+                showError($('#addProductName'), 'Tên không được để trống');
+                isValid = false;
+            } else {
+                showSuccess($('#addProductName'));
+            }
+            if (!image) {
+                showError($('#addImageUrl'), 'Link ảnh không được để trống');
+                isValid = false;
+            } else {
+                showSuccess($('#addImageUrl'));
+            }
+            if (!price || price <= 0) {
+                showError($('#addInitialPrice'), 'Giá phải > 0');
+                isValid = false;
+            } else {
+                showSuccess($('#addInitialPrice'));
+            }
+            if (stock === '' || stock < 0) {
+                showError($('#addStock'), 'Số lượng không hợp lệ');
+                isValid = false;
+            } else {
+                showSuccess($('#addStock'));
+            }
 
             if (!isValid) return;
 
@@ -167,6 +192,7 @@ export const initProduct = () => {
             localStorage.setItem('products', JSON.stringify(products));
 
             $('#modalProduct input, #modalProduct textarea').val('').removeClass('is-valid is-invalid');
+            $('#addImgPreview').attr('src', 'https://via.placeholder.com/150');
             $('#addCategory').prop('selectedIndex', 0).trigger('change');
             alert('Thêm sản phẩm mới thành công!');
             $('#modalProduct').modal('hide');
@@ -175,11 +201,16 @@ export const initProduct = () => {
     };
 
     const handleEditProduct = () => {
-        $(document).off('click', '.btn-edit-product').on('click', '.btn-edit-product', function() {
-            const targetId = String($(this).data('id')); 
+        $('#editProductImage').on('input', function () {
+            const url = $(this).val().trim();
+            $('#editProductPreview').attr('src', url || 'https://via.placeholder.com/150');
+        });
+
+        $(document).off('click', '.btn-edit-product').on('click', '.btn-edit-product', function () {
+            const targetId = String($(this).data('id'));
             const products = getProducts();
             const product = products.find(p => String(p.id) === targetId);
-            
+
             if (!product) return alert("Lỗi: Không tìm thấy sản phẩm!");
 
             $('#modalProductDetail').attr('data-current-id', targetId);
@@ -192,12 +223,12 @@ export const initProduct = () => {
             $('#editProductStatus').val(product.status || 'active');
             $('#editProductDesc').val(htmlToPlainText(product.description));
             $('#currentStockDisplay').text(product.stock || 0);
-            
+
             renderPriceHistory(product);
             renderWarehouseHistory(product);
         });
 
-        $(document).off('click', '#btnUpdateProductGeneralInfo').on('click', '#btnUpdateProductGeneralInfo', function() {
+        $(document).off('click', '#btnUpdateProductGeneralInfo').on('click', '#btnUpdateProductGeneralInfo', function () {
             const currentId = $('#modalProductDetail').attr('data-current-id');
             const products = getProducts();
             const index = products.findIndex(p => String(p.id) === currentId);
@@ -205,7 +236,7 @@ export const initProduct = () => {
             if (index !== -1) {
                 const title = $('#editProductName').val().trim();
                 const category = $('#editProductCategory').val();
-                
+
                 products[index].title = title;
                 products[index].slug = createSlug(title);
                 products[index].categorySlug = categorySlugMap[category] || 'other';
@@ -221,35 +252,6 @@ export const initProduct = () => {
                 renderProductTable();
             }
         });
-
-        window.updatePrice = function () {
-            const currentId = $('#modalProductDetail').attr('data-current-id');
-            const newPrice = $('#newPrice').val();
-            const reason = $('#priceReason').val();
-            if (!newPrice || newPrice <= 0) return alert("Vui lòng nhập giá mới hợp lệ!");
-
-            const products = getProducts();
-            const index = products.findIndex(p => String(p.id) === currentId);
-
-            if (index !== -1) {
-                const historyEntry = {
-                    date: new Date().toLocaleDateString('vi-VN'),
-                    price: parseFloat(newPrice),
-                    reason: reason || 'Cập nhật định kỳ',
-                    user: getCurrentAdminName()
-                };
-
-                if (!products[index].priceHistory) products[index].priceHistory = [];
-                products[index].priceHistory.unshift(historyEntry);
-                products[index].price = parseFloat(newPrice);
-
-                localStorage.setItem('products', JSON.stringify(products));
-                renderPriceHistory(products[index]);
-                $('#newPrice, #priceReason').val('');
-                renderProductTable();
-                alert("Cập nhật giá thành công!");
-            }
-        };
 
         window.updateWarehouse = function () {
             const currentId = $('#modalProductDetail').attr('data-current-id');
@@ -268,7 +270,7 @@ export const initProduct = () => {
 
             const newStock = (type === 'import') ? (currentStock + qty) : (currentStock - qty);
             products[index].stock = newStock;
-            
+
             const newLog = {
                 date: new Date().toLocaleString('vi-VN'),
                 type: type,
@@ -277,7 +279,7 @@ export const initProduct = () => {
                 user: getCurrentAdminName()
             };
 
-            if(!products[index].warehouseLogs) products[index].warehouseLogs = [];
+            if (!products[index].warehouseLogs) products[index].warehouseLogs = [];
             products[index].warehouseLogs.unshift(newLog);
 
             localStorage.setItem('products', JSON.stringify(products));
@@ -329,7 +331,7 @@ export const initProduct = () => {
     };
 
     const handleDeleteProduct = () => {
-        $(document).off('click', '.btn-delete-product').on('click', '.btn-delete-product', function() {
+        $(document).off('click', '.btn-delete-product').on('click', '.btn-delete-product', function () {
             const targetId = String($(this).data('id'));
             if (confirm('Xác nhận xóa sản phẩm này khỏi hệ thống?')) {
                 const products = getProducts().filter(p => String(p.id) !== targetId);

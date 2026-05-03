@@ -192,230 +192,6 @@
                             </div>
                         </div>
 
-                        <div class="modal fade" id="modalProduct" tabindex="-1" aria-hidden="true">
-                            <div class="modal-dialog modal-lg modal-dialog-centered">
-                                <div class="modal-content border-0 shadow-lg rounded-4">
-                                    <div class="modal-header border-0 p-4 pb-0">
-                                        <h5 class="fw-bold mb-0">Thêm sản phẩm mới</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                    </div>
-                                    <div class="modal-body p-4">
-                                        <div class="row g-3">
-                                            <div class="col-md-12">
-                                                <label class="small fw-bold mb-1">Tên sản phẩm</label>
-                                                <input type="text" id="addProductName"
-                                                    class="form-control border-0 bg-light shadow-none"
-                                                    placeholder="Nhập tên sản phẩm...">
-                                            </div>
-                                            <div class="col-md-12">
-                                                <label class="small fw-bold mb-1">Link ảnh sản phẩm (URL)</label>
-                                                <input type="text" id="addImageUrl"
-                                                    class="form-control border-0 bg-light shadow-none"
-                                                    placeholder="https://example.com/image.jpg">
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label class="small fw-bold mb-1">Giá bán ban đầu</label>
-                                                <input type="number" id="addInitialPrice"
-                                                    class="form-control border-0 bg-light shadow-none"
-                                                    placeholder="VD: 20000000">
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label class="small fw-bold mb-1">Số lượng nhập kho</label>
-                                                <input type="number" id="addStock"
-                                                    class="form-control border-0 bg-light shadow-none"
-                                                    placeholder="VD: 50">
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label class="form-label small fw-bold">Danh mục</label>
-                                                <select id="addCategory"
-                                                    class="form-select border-0 bg-light shadow-none">
-                                                    <option value="dien-thoai">Điện thoại</option>
-                                                    <option value="tablet">Máy tính bảng</option>
-                                                    <option value="laptop">Laptop</option>
-                                                    <option value="man-hinh">Màn hình</option>
-                                                    <option value="phu-kien">Phụ kiện</option>
-                                                    <option value="gia-dung">Gia dụng</option>
-                                                </select>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label class="form-label small fw-bold">Thương hiệu</label>
-                                                <select id="addBrand" class="form-select border-0 bg-light shadow-none">
-                                                </select>
-                                            </div>
-                                            <div class="col-12">
-                                                <label class="small fw-bold mb-1">Mô tả sản phẩm</label>
-                                                <textarea id="addDescription"
-                                                    class="form-control border-0 bg-light shadow-none" rows="3"
-                                                    placeholder="Mô tả ngắn..."></textarea>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer border-0 p-4 pt-0">
-                                        <button id="btnSaveNewProduct"
-                                            class="btn btn-danger w-100 rounded-3 py-2 fw-bold">Lưu</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="modal fade" id="modalProductDetail" tabindex="-1" aria-hidden="true">
-                            <div class="modal-dialog modal-xl modal-dialog-centered">
-                                <div class="modal-content border-0 shadow rounded-4">
-                                    <div class="modal-header border-bottom-0 p-4">
-                                        <h5 class="fw-bold mb-0">Cấu hình sản phẩm: <span id="detailProductName">iPhone
-                                                15 Pro Max</span></h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                            aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body p-4 pt-0">
-                                        <ul class="nav nav-tabs border-0 mb-4 bg-light p-1 rounded-3" role="tablist">
-                                            <li class="nav-item flex-fill">
-                                                <button class="nav-link active border-0 w-100 rounded-3"
-                                                    data-bs-toggle="tab" data-bs-target="#subtab-info">
-                                                    <i class="bi bi-info-circle me-1"></i> Thông tin chính
-                                                </button>
-                                            </li>
-                                            <li class="nav-item flex-fill">
-                                                <button class="nav-link border-0 w-100 rounded-3" data-bs-toggle="tab"
-                                                    data-bs-target="#subtab-warehouse">
-                                                    <i class="bi bi-house-gear me-1"></i> Nhật ký & Cập nhật Kho
-                                                </button>
-                                            </li>
-                                        </ul>
-
-                                        <div class="tab-content">
-                                            <div class="tab-pane fade show active" id="subtab-info">
-                                                <div class="row g-3">
-                                                    <div class="col-md-8">
-                                                        <div class="row g-3">
-                                                            <div class="col-md-12">
-                                                                <label class="form-label small fw-bold">Tên sản
-                                                                    phẩm</label>
-                                                                <input type="text" id="editProductName"
-                                                                    class="form-control border-0 bg-light shadow-none">
-                                                            </div>
-                                                            <div class="col-md-12">
-                                                                <label class="form-label small fw-bold">Link ảnh sản
-                                                                    phẩm (URL)</label>
-                                                                <input type="text" id="editProductImage"
-                                                                    class="form-control border-0 bg-light shadow-none">
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <label class="form-label small fw-bold">Giá bán hiện tại
-                                                                    (đ)</label>
-                                                                <input type="number" id="editProductPrice"
-                                                                    class="form-control border-0 bg-light shadow-none">
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <label class="form-label small fw-bold">Danh mục</label>
-                                                                <select id="editProductCategory"
-                                                                    class="form-select border-0 bg-light shadow-none">
-                                                                    <option value="dien-thoai">Điện thoại</option>
-                                                                    <option value="tablet">Máy tính bảng</option>
-                                                                    <option value="laptop">Laptop</option>
-                                                                    <option value="man-hinh">Màn hình</option>
-                                                                    <option value="phu-kien">Phụ kiện</option>
-                                                                    <option value="gia-dung">Gia dụng</option>
-                                                                </select>
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <label class="form-label small fw-bold">Trạng
-                                                                    thái</label>
-                                                                <select id="editProductStatus"
-                                                                    class="form-select border-0 bg-light shadow-none">
-                                                                    <option value="active">Active</option>
-                                                                    <option value="inactive">Inactive</option>
-                                                                </select>
-                                                            </div>
-                                                            <div class="col-12">
-                                                                <label class="form-label small fw-bold">Mô tả sản
-                                                                    phẩm</label>
-                                                                <textarea id="editProductDesc"
-                                                                    class="form-control border-0 bg-light shadow-none"
-                                                                    rows="4"></textarea>
-                                                            </div>
-                                                        </div>
-                                                        <div class="mt-4">
-                                                            <button id="btnUpdateProductGeneralInfo"
-                                                                class="btn btn-primary rounded-3 px-5 py-2 fw-bold">
-                                                                <i class="bi bi-check2-circle me-1"></i> Lưu thông tin
-                                                                sản phẩm
-                                                            </button>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-md-4">
-                                                        <div class="card border-0 bg-light rounded-4 p-3 text-center">
-                                                            <label class="text-muted small fw-bold mb-2">XEM TRƯỚC
-                                                                ẢNH</label>
-                                                            <img id="editProductPreview"
-                                                                src="https://via.placeholder.com/150"
-                                                                class="img-fluid rounded-3"
-                                                                style="max-height: 250px; width: 100%; object-fit: contain;">
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div class="tab-pane fade" id="subtab-warehouse">
-                                                <div class="alert alert-info border-0 rounded-4 mb-4">
-                                                    <h6 class="fw-bold"><i class="bi bi-plus-circle-fill me-2"></i>Cập
-                                                        nhật số lượng tồn kho</h6>
-                                                    <div class="row g-2 mt-2">
-                                                        <div class="col-md-3">
-                                                            <select id="logType"
-                                                                class="form-select border-0 shadow-none">
-                                                                <option value="import">Nhập kho (+)</option>
-                                                                <option value="export">Xuất kho (-)</option>
-                                                            </select>
-                                                        </div>
-                                                        <div class="col-md-3">
-                                                            <input type="number" id="logQty"
-                                                                class="form-control border-0 shadow-none"
-                                                                placeholder="Số lượng">
-                                                        </div>
-                                                        <div class="col-md-4">
-                                                            <input type="text" id="logNote"
-                                                                class="form-control border-0 shadow-none"
-                                                                placeholder="Ghi chú (VD: Nhập hàng mới)...">
-                                                        </div>
-                                                        <div class="col-md-2">
-                                                            <button id="btnUpdateWarehouse"
-                                                                class="btn btn-dark w-100 rounded-3 fw-bold">Ghi sổ
-                                                                kho</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="d-flex justify-content-between align-items-center mb-3">
-                                                    <h6 class="fw-bold mb-0">Lịch sử nhập/xuất</h6>
-                                                    <span class="badge bg-light text-dark border">Tồn kho hiện tại:
-                                                        <span id="currentStockDisplay" class="fw-bold">0</span>
-                                                        chiếc</span>
-                                                </div>
-
-                                                <div class="table-responsive" style="max-height: 350px;">
-                                                    <table class="table table-sm align-middle">
-                                                        <thead class="table-light small text-muted">
-                                                            <tr>
-                                                                <th>Ngày</th>
-                                                                <th>Loại</th>
-                                                                <th>Số lượng</th>
-                                                                <th>Ghi chú</th>
-                                                                <th>Người thực hiện</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody id="warehouseHistoryBody">
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
                         <div class="tab-pane fade" id="content-news" role="tabpanel">
                             <div
                                 class="d-flex flex-column flex-md-row justify-content-between align-items-md-center border-bottom pb-3 mb-4 gap-3">
@@ -437,16 +213,19 @@
                                             <th class="text-end pe-4">Thao tác</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody id="newsTableBody">
                                         <tr>
                                             <td class="ps-4">
                                                 <div class="d-flex align-items-center">
                                                     <img src="https://picsum.photos/150/100?random=1"
-                                                        class="news-thumb-admin me-3">
+                                                        class="rounded shadow-sm me-3"
+                                                        style="width: 80px; height: 50px; object-fit: cover;">
                                                     <div>
                                                         <h6 class="mb-0 fw-bold text-truncate"
-                                                            style="max-width: 200px;">Tướng 5 vàng mùa 17...</h6>
-                                                        <small class="text-muted d-block">ID: N-001</small>
+                                                            style="max-width: 250px;">Tất tần tật tướng 5 vàng có mặt
+                                                            trong ĐTCL mùa 17</h6>
+                                                        <small class="text-muted d-block small">Mô tả: Những vị tướng 5
+                                                            vàng...</small>
                                                     </div>
                                                 </div>
                                             </td>
@@ -456,13 +235,17 @@
                                             </td>
                                             <td class="text-center d-none d-md-table-cell small text-muted">28/04/2026
                                             </td>
-                                            <td class="text-center d-none d-lg-table-cell small fw-bold">Bảo Lê</td>
+                                            <td class="text-center d-none d-lg-table-cell small fw-bold">Lê Gia Bảo</td>
                                             <td class="text-end pe-4">
-                                                <div class="btn-group">
-                                                    <button class="btn btn-sm btn-outline-dark border-0"><i
-                                                            class="bi bi-pencil"></i></button>
-                                                    <button class="btn btn-sm btn-outline-danger border-0"><i
-                                                            class="bi bi-trash"></i></button>
+                                                <div class="btn-group shadow-sm rounded">
+                                                    <button class="btn btn-sm btn-white border btn-edit-news"
+                                                        data-id="N-001">
+                                                        <i class="bi bi-pencil-square text-primary"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-white border btn-delete-news"
+                                                        data-id="N-001">
+                                                        <i class="bi bi-trash text-danger"></i>
+                                                    </button>
                                                 </div>
                                             </td>
                                         </tr>
@@ -666,6 +449,225 @@
         </div>
     </section>
 
+    <div class="modal fade" id="modalProduct" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4">
+                <div class="modal-header border-0 p-4 pb-0">
+                    <h5 class="fw-bold mb-0">Thêm sản phẩm mới</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <div class="row g-3">
+                                <div class="col-md-12">
+                                    <label class="small fw-bold mb-1">Tên sản phẩm</label>
+                                    <input type="text" id="addProductName"
+                                        class="form-control border-0 bg-light shadow-none"
+                                        placeholder="Nhập tên sản phẩm...">
+                                </div>
+                                <div class="col-md-12">
+                                    <label class="small fw-bold mb-1">Link ảnh sản phẩm (URL)</label>
+                                    <input type="text" id="addImageUrl"
+                                        class="form-control border-0 bg-light shadow-none"
+                                        placeholder="https://example.com/image.jpg">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="small fw-bold mb-1">Giá bán ban đầu</label>
+                                    <input type="number" id="addInitialPrice"
+                                        class="form-control border-0 bg-light shadow-none" placeholder="VD: 20000000">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="small fw-bold mb-1">Số lượng nhập kho</label>
+                                    <input type="number" id="addStock"
+                                        class="form-control border-0 bg-light shadow-none" placeholder="VD: 50">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold">Danh mục</label>
+                                    <select id="addCategory" class="form-select border-0 bg-light shadow-none">
+                                        <option value="dien-thoai">Điện thoại</option>
+                                        <option value="tablet">Máy tính bảng</option>
+                                        <option value="laptop">Laptop</option>
+                                        <option value="man-hinh">Màn hình</option>
+                                        <option value="phu-kien">Phụ kiện</option>
+                                        <option value="gia-dung">Gia dụng</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label small fw-bold">Thương hiệu</label>
+                                    <select id="addBrand" class="form-select border-0 bg-light shadow-none"></select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="card border-0 bg-light rounded-4 p-3 text-center h-100 justify-content-center">
+                                <label class="text-muted small fw-bold mb-2">XEM TRƯỚC ẢNH</label>
+                                <img id="addImgPreview" src="https://via.placeholder.com/150"
+                                    class="img-fluid rounded-3 mx-auto" style="max-height: 200px; object-fit: contain;">
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="small fw-bold mb-1">Mô tả sản phẩm</label>
+                            <textarea id="addDescription" class="form-control border-0 bg-light shadow-none" rows="3"
+                                placeholder="Mô tả ngắn..."></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <button id="btnSaveNewProduct" class="btn btn-danger w-100 rounded-3 py-2 fw-bold">Lưu sản
+                        phẩm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalProductDetail" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content border-0 shadow rounded-4">
+                <div class="modal-header border-bottom-0 p-4">
+                    <h5 class="fw-bold mb-0">Cấu hình sản phẩm: <span id="detailProductName"
+                            class="text-primary"></span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4 pt-0">
+                    <ul class="nav nav-tabs border-0 mb-4 bg-light p-1 rounded-3" role="tablist">
+                        <li class="nav-item flex-fill">
+                            <button class="nav-link active border-0 w-100 rounded-3 fw-bold" data-bs-toggle="tab"
+                                data-bs-target="#subtab-info">
+                                <i class="bi bi-info-circle me-1"></i> Thông tin chính
+                            </button>
+                        </li>
+                        <li class="nav-item flex-fill">
+                            <button class="nav-link border-0 w-100 rounded-3 fw-bold" data-bs-toggle="tab"
+                                data-bs-target="#subtab-warehouse">
+                                <i class="bi bi-house-gear me-1"></i> Nhật ký & Cập nhật Kho
+                            </button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content">
+                        <div class="tab-pane fade show active" id="subtab-info">
+                            <div class="row g-3">
+                                <div class="col-md-8">
+                                    <div class="row g-3">
+                                        <div class="col-md-12">
+                                            <label class="form-label small fw-bold">Tên sản phẩm</label>
+                                            <input type="text" id="editProductName"
+                                                class="form-control border-0 bg-light shadow-none">
+                                        </div>
+                                        <div class="col-md-12">
+                                            <label class="form-label small fw-bold">Link ảnh sản phẩm (URL)</label>
+                                            <input type="text" id="editProductImage"
+                                                class="form-control border-0 bg-light shadow-none">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label small fw-bold">Giá bán hiện tại (đ)</label>
+                                            <input type="number" id="editProductPrice"
+                                                class="form-control border-0 bg-light shadow-none">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label small fw-bold">Danh mục</label>
+                                            <select id="editProductCategory"
+                                                class="form-select border-0 bg-light shadow-none">
+                                                <option value="dien-thoai">Điện thoại</option>
+                                                <option value="tablet">Máy tính bảng</option>
+                                                <option value="laptop">Laptop</option>
+                                                <option value="man-hinh">Màn hình</option>
+                                                <option value="phu-kien">Phụ kiện</option>
+                                                <option value="gia-dung">Gia dụng</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label small fw-bold">Trạng thái</label>
+                                            <select id="editProductStatus"
+                                                class="form-select border-0 bg-light shadow-none">
+                                                <option value="active">Active</option>
+                                                <option value="inactive">Inactive</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label small fw-bold">Mô tả sản phẩm</label>
+                                            <textarea id="editProductDesc"
+                                                class="form-control border-0 bg-light shadow-none" rows="4"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="mt-4">
+                                        <button id="btnUpdateProductGeneralInfo"
+                                            class="btn btn-primary rounded-3 px-5 py-2 fw-bold">
+                                            <i class="bi bi-check2-circle me-1"></i> Lưu thông tin sản phẩm
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="card border-0 bg-light rounded-4 p-3 text-center">
+                                        <label class="text-muted small fw-bold mb-2">XEM TRƯỚC ẢNH</label>
+                                        <img id="editProductPreview" src="https://via.placeholder.com/150"
+                                            class="img-fluid rounded-3 mx-auto"
+                                            style="max-height: 300px; width: 100%; object-fit: contain;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tab: Nhật ký kho -->
+                        <div class="tab-pane fade" id="subtab-warehouse">
+                            <div class="alert alert-info border-0 rounded-4 mb-4">
+                                <h6 class="fw-bold"><i class="bi bi-plus-circle-fill me-2"></i>Cập nhật số lượng tồn kho
+                                </h6>
+                                <div class="row g-2 mt-2">
+                                    <div class="col-md-3">
+                                        <select id="logType" class="form-select border-0 shadow-none">
+                                            <option value="import">Nhập kho (+)</option>
+                                            <option value="export">Xuất kho (-)</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="number" id="logQty" class="form-control border-0 shadow-none"
+                                            placeholder="Số lượng">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <input type="text" id="logNote" class="form-control border-0 shadow-none"
+                                            placeholder="Ghi chú (VD: Nhập hàng mới)...">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button id="btnUpdateWarehouse" class="btn btn-dark w-100 rounded-3 fw-bold">Ghi
+                                            sổ kho</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="fw-bold mb-0">Lịch sử nhập/xuất</h6>
+                                <span class="badge bg-light text-dark border py-2 px-3 rounded-pill">
+                                    Tồn kho hiện tại: <span id="currentStockDisplay"
+                                        class="fw-bold text-primary">0</span> chiếc
+                                </span>
+                            </div>
+
+                            <div class="table-responsive" style="max-height: 350px;">
+                                <table class="table table-sm align-middle">
+                                    <thead class="table-light sticky-top small text-muted">
+                                        <tr>
+                                            <th>Ngày</th>
+                                            <th>Loại</th>
+                                            <th>Số lượng</th>
+                                            <th>Ghi chú</th>
+                                            <th>Người thực hiện</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="warehouseHistoryBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="modal fade" id="modalOrderDetail" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content border-0 shadow-lg rounded-4">
@@ -739,66 +741,6 @@
                     <button class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Đóng</button>
                     <button class="btn btn-danger rounded-pill px-4 fw-bold shadow-sm" id="btnProcessOrder">Xác nhận đơn
                         hàng</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="modal fade" id="modalNews" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-xl modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg rounded-4">
-                <div class="modal-header border-0 p-4 pb-0">
-                    <h5 class="fw-bold mb-0">Soạn thảo bài viết</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body p-4">
-                    <div class="row g-3">
-                        <div class="col-md-8">
-                            <div class="mb-3">
-                                <label class="small fw-bold mb-1">Tiêu đề bài viết</label>
-                                <input type="text" id="newsTitle" class="form-control border-0 bg-light shadow-none"
-                                    placeholder="Nhập tiêu đề hấp dẫn...">
-                            </div>
-                            <div class="mb-3">
-                                <label class="small fw-bold mb-1">Mô tả ngắn (Sapo)</label>
-                                <textarea id="newsSapo" class="form-control border-0 bg-light shadow-none" rows="2"
-                                    placeholder="Tóm tắt ngắn gọn nội dung..."></textarea>
-                            </div>
-                            <div class="mb-3">
-                                <label class="small fw-bold mb-1">Nội dung bài viết (HTML)</label>
-                                <textarea id="newsContent" class="form-control border-0 bg-light shadow-none" rows="10"
-                                    placeholder="Viết nội dung tại đây..."></textarea>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card border-0 bg-light p-3 rounded-4 mb-3">
-                                <label class="small fw-bold mb-2">Ảnh bìa (URL)</label>
-                                <input type="text" id="newsThumb" class="form-control border-0 shadow-none mb-2"
-                                    placeholder="Link ảnh...">
-                                <img id="newsPreview" src="https://via.placeholder.com/300x180"
-                                    class="img-fluid rounded-3" style="height: 180px; object-fit: cover;">
-                            </div>
-                            <div class="mb-3">
-                                <label class="small fw-bold mb-1">Chuyên mục</label>
-                                <select id="newsCategory" class="form-select border-0 bg-light shadow-none">
-                                    <option value="tin-cong-nghe">Tin công nghệ</option>
-                                    <option value="s-games">S-Games</option>
-                                    <option value="tu-van">Tư vấn</option>
-                                    <option value="tren-tay">Trên tay</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label class="small fw-bold mb-1">Tác giả</label>
-                                <input type="text" id="newsAuthor" class="form-control border-0 bg-light shadow-none"
-                                    placeholder="Tên tác giả">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer border-0 p-4 pt-0">
-                    <button type="button" class="btn btn-outline-secondary rounded-3 px-4"
-                        data-bs-dismiss="modal">Hủy</button>
-                    <button id="btnSaveNews" class="btn btn-danger rounded-3 px-5 py-2 fw-bold">Đăng bài viết</button>
                 </div>
             </div>
         </div>
@@ -938,6 +880,84 @@
                     <button class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Hủy</button>
                     <button id="btnSubmitEditCustomer" class="btn btn-danger rounded-pill px-4 fw-bold shadow-sm">Cập
                         nhật ngay</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalNews" data-bs-backdrop="static" tabindex="-1" aria-labelledby="modalNewsLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title fw-bold text-white" id="modalNewsLabel">BÀI VIẾT TIN TỨC</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="formNews">
+                        <input type="hidden" id="newsId">
+
+                        <div class="row g-4">
+                            <div class="col-lg-4 border-end">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold small">Hình ảnh bài viết (URL)</label>
+                                    <input type="text" class="form-control shadow-none mb-2" id="newsThumbnail"
+                                        placeholder="Nhập link ảnh (picsum, imgur...)">
+                                    <div class="news-preview-wrapper rounded border d-flex align-items-center justify-content-center bg-light"
+                                        style="height: 180px; overflow: hidden;">
+                                        <img id="imgNewsPreview" src="https://placehold.co/600x400?text=Xem+trước+ảnh"
+                                            class="w-100 h-100 object-fit-cover">
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold small">Chuyên mục</label>
+                                    <select class="form-select shadow-none" id="newsCategory">
+                                        <option value="S-Games">S-Games</option>
+                                        <option value="Tin công nghệ">Tin công nghệ</option>
+                                        <option value="Mẹo vặt">Mẹo vặt</option>
+                                        <option value="Trên tay">Trên tay</option>
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold small">Người viết bài</label>
+                                    <input type="text" class="form-control shadow-none bg-light" id="newsAuthor"
+                                        readonly>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-8">
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold small">Tiêu đề bài viết</label>
+                                    <input type="text" class="form-control shadow-none fw-bold" id="newsTitle"
+                                        placeholder="Nhập tiêu đề tin tức...">
+                                    <div class="invalid-feedback" id="errNewsTitle">Vui lòng nhập tiêu đề bài viết</div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold small">Tóm tắt ngắn (Summary)</label>
+                                    <textarea class="form-control shadow-none" id="newsSummary" rows="2"
+                                        placeholder="Nội dung hiển thị nhanh ở danh sách tin..."></textarea>
+                                    <div class="invalid-feedback" id="errNewsSummary">Vui lòng nhập tóm tắt</div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold small">Nội dung bài viết (Content)</label>
+                                    <textarea class="form-control shadow-none" id="newsContent" rows="10"
+                                        placeholder="Viết nội dung bài viết chi tiết tại đây..."></textarea>
+                                    <div class="invalid-feedback" id="errNewsContent">Nội dung không được để trống</div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer bg-light border-0">
+                    <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Đóng</button>
+                    <button type="button" class="btn btn-danger px-4 shadow-sm" id="btnSaveNews">
+                        <i class="bi bi-check2-circle me-1"></i> Lưu bài viết
+                    </button>
                 </div>
             </div>
         </div>

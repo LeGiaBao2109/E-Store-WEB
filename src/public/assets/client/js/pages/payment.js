@@ -1,6 +1,8 @@
-import { getCartItems, saveCart, clearTempCart } from '../utils/cart.js';
+import { getCartItems, saveCart, clearTempCart, updateCartBadge } from '../utils/cart.js';
 
 export const initPayment = () => {
+    if (!window.location.pathname.includes('/cart/payment')) return;
+
     const $orderItemsContainer = $('.order-items');
     const $subtotalDisplay = $('.order-summary .fw-bold.small.text-dark').first();
     const $vatDisplay = $('.order-summary .fw-bold.small.text-dark').eq(1);
@@ -8,13 +10,13 @@ export const initPayment = () => {
 
     const renderOrderSummary = () => {
         let cart = getCartItems('buy_now');
+        
         if (!cart || cart.length === 0) {
             cart = getCartItems('all');
         }
 
-        const currentUser = JSON.parse(localStorage.getItem('currentUser')) || {};
-
-        if (!currentUser.email) {
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        if (!currentUser) {
             alert("Vui lòng đăng nhập để tiếp tục!");
             window.location.href = "/auth";
             return;
@@ -24,14 +26,13 @@ export const initPayment = () => {
         $('#orderEmail').val(currentUser.email || '');
         $('#orderPhone').val(currentUser.phone || '');
 
-        $orderItemsContainer.empty();
-        let subtotal = 0;
-
         if (!cart || cart.length === 0) {
-            alert("Đơn hàng của bạn đang trống!");
-            window.location.href = "/";
+            $orderItemsContainer.html('<div class="text-center py-3 text-muted">Đơn hàng trống</div>');
             return;
         }
+
+        $orderItemsContainer.empty();
+        let subtotal = 0;
 
         cart.forEach((item) => {
             const itemTotal = Number(item.price) * Number(item.quantity);
@@ -41,14 +42,14 @@ export const initPayment = () => {
                 <div class="order-item-row mb-3 pb-3 border-bottom d-flex align-items-center justify-content-between">
                     <div class="d-flex align-items-center">
                         <div class="flex-shrink-0">
-                            <img src="${item.image}" class="rounded-3 border bg-white" style="width: 70px; height: 70px; object-fit: contain;">
+                            <img src="${item.image}" class="rounded-3 border bg-white" style="width: 70px; height: 70px; object-fit: contain;" onerror="this.src='https://via.placeholder.com/70'">
                         </div>
                         <div class="ms-3">
-                            <h6 class="mb-0 fw-bold text-dark text-truncate" style="max-width: 200px;">${item.title}</h6>
+                            <h6 class="mb-0 fw-bold text-dark text-truncate" style="max-width: 180px;">${item.title}</h6>
                             <span class="text-muted small">Số lượng: ${item.quantity}</span>
                         </div>
                     </div>
-                    <div class="fw-bold text-dark">${itemTotal.toLocaleString()} đ</div>
+                    <div class="fw-bold text-dark">${itemTotal.toLocaleString()}đ</div>
                 </div>
             `);
         });
@@ -57,9 +58,9 @@ export const initPayment = () => {
         const vatAmount = Math.round(subtotal * vatRate);
         const finalTotal = subtotal + vatAmount;
 
-        $subtotalDisplay.text(`${subtotal.toLocaleString()} đ`);
-        $vatDisplay.text(`${vatAmount.toLocaleString()} đ`);
-        $totalAmountDisplay.text(`${finalTotal.toLocaleString()} đ`);
+        $subtotalDisplay.text(`${subtotal.toLocaleString()}đ`);
+        $vatDisplay.text(`${vatAmount.toLocaleString()}đ`);
+        $totalAmountDisplay.text(`${finalTotal.toLocaleString()}đ`);
 
         window.currentOrderTotal = { subtotal, vatAmount, finalTotal, items: cart };
     };
@@ -71,26 +72,13 @@ export const initPayment = () => {
         const finalPhone = $('#orderPhone').val().trim();
         const address = $('#fullAddress').val()?.trim();
 
-        if (!finalFullName) {
-            alert("Vui lòng nhập họ tên người nhận!");
-            $('#orderFullName').focus();
+        if (!finalFullName || !finalPhone || !address) {
+            alert("Vui lòng điền đầy đủ thông tin giao hàng!");
             return;
         }
 
-        if (!finalPhone) {
-            alert("Vui lòng nhập số điện thoại!");
-            $('#orderPhone').focus();
-            return;
-        }
-
-        if (!address) {
-            alert("Vui lòng nhập địa chỉ giao hàng!");
-            $('#fullAddress').focus();
-            return;
-        }
-
-        if (!window.currentOrderTotal) {
-            alert("Lỗi dữ liệu thanh toán. Vui lòng thử lại!");
+        if (!window.currentOrderTotal || window.currentOrderTotal.items.length === 0) {
+            alert("Giỏ hàng của bạn đang trống!");
             return;
         }
 
@@ -99,10 +87,10 @@ export const initPayment = () => {
         let stockError = false;
 
         items.forEach(cartItem => {
-            const productIndex = allProducts.findIndex(p => p.id === cartItem.id);
-            if (productIndex !== -1) {
-                if (allProducts[productIndex].stock >= cartItem.quantity) {
-                    allProducts[productIndex].stock -= cartItem.quantity;
+            const p = allProducts.find(prod => prod.id === cartItem.id);
+            if (p) {
+                if (p.stock >= cartItem.quantity) {
+                    p.stock -= cartItem.quantity;
                 } else {
                     stockError = true;
                 }
@@ -110,7 +98,7 @@ export const initPayment = () => {
         });
 
         if (stockError) {
-            alert("Một số sản phẩm đã hết hàng hoặc không đủ số lượng tồn kho!");
+            alert("Sản phẩm trong kho không đủ số lượng!");
             return;
         }
 
@@ -132,7 +120,6 @@ export const initPayment = () => {
 
         try {
             localStorage.setItem('products', JSON.stringify(allProducts));
-
             let history = JSON.parse(localStorage.getItem('order_history')) || [];
             history.unshift(newOrder);
             localStorage.setItem('order_history', JSON.stringify(history));
@@ -146,7 +133,7 @@ export const initPayment = () => {
             alert("Đặt hàng thành công!");
             window.location.href = "/"; 
         } catch (err) {
-            alert("Không thể hoàn tất đơn hàng. Vui lòng kiểm tra lại!");
+            alert("Lỗi hệ thống khi đặt hàng!");
         }
     });
 
