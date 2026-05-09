@@ -1,17 +1,28 @@
 let users = JSON.parse(localStorage.getItem('users')) || [];
 
 export const initCustomerManagement = () => {
-    renderUserTable();
+    renderUserTable(users);
     setupEventListeners();
 };
 
-const renderUserTable = () => {
+const renderUserTable = (data) => {
     const $tbody = $('#content-customers tbody');
     if (!$tbody.length) return;
 
     $tbody.empty();
 
-    users.forEach((user) => {
+    if (data.length === 0) {
+        $tbody.append(`
+            <tr>
+                <td colspan="5" class="text-center py-4 text-muted">
+                    Không tìm thấy khách hàng nào phù hợp.
+                </td>
+            </tr>
+        `);
+        return;
+    }
+
+    data.forEach((user) => {
         const isBlock = user.status === 'inactive';
         
         $tbody.append(`
@@ -24,7 +35,7 @@ const renderUserTable = () => {
                         </div>
                         <div>
                             <h6 class="mb-0 fw-bold">${user.fullName}</h6>
-                            <small class="text-muted">@${user.username}</small>
+                            <small class="text-muted">@${user.username || 'user'}</small>
                         </div>
                     </div>
                 </td>
@@ -59,6 +70,24 @@ const renderUserTable = () => {
 };
 
 const setupEventListeners = () => {
+    $('#content-customers input[type="text"]').off('input').on('input', function() {
+        const keyword = $(this).val().toLowerCase().trim();
+        
+        const filteredUsers = users.filter(user => {
+            const name = (user.fullName || '').toLowerCase();
+            const email = (user.email || '').toLowerCase();
+            const phone = (user.phone || '').toLowerCase();
+            const username = (user.username || '').toLowerCase();
+
+            return name.includes(keyword) || 
+                   email.includes(keyword) || 
+                   phone.includes(keyword) || 
+                   username.includes(keyword);
+        });
+
+        renderUserTable(filteredUsers);
+    });
+
     $(document).off('click', '.btn-edit-customer').on('click', '.btn-edit-customer', function() {
         const userId = $(this).data('id');
         const user = users.find(u => String(u.id) === String(userId));
@@ -73,8 +102,10 @@ const setupEventListeners = () => {
             $('#editCustomerAddress').val(user.address || '');
             
             const modalEl = document.getElementById('modalEditCustomer');
-            const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
-            modal.show();
+            if (modalEl) {
+                const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+                modal.show();
+            }
         }
     });
 
@@ -85,6 +116,7 @@ const setupEventListeners = () => {
         if (index !== -1) {
             users[index].status = (users[index].status === 'inactive') ? 'active' : 'inactive';
             saveData();
+            alert(`Đã ${users[index].status === 'active' ? 'mở khóa' : 'khóa'} tài khoản thành công!`);
         }
     });
 
@@ -166,5 +198,16 @@ const setupEventListeners = () => {
 const saveData = () => {
     localStorage.setItem('users', JSON.stringify(users));
     users = JSON.parse(localStorage.getItem('users')) || [];
-    renderUserTable();
+    const keyword = $('#content-customers input[type="text"]').val().toLowerCase().trim();
+    
+    if (keyword) {
+        const filtered = users.filter(user => 
+            (user.fullName || '').toLowerCase().includes(keyword) ||
+            (user.email || '').toLowerCase().includes(keyword) ||
+            (user.phone || '').toLowerCase().includes(keyword)
+        );
+        renderUserTable(filtered);
+    } else {
+        renderUserTable(users);
+    }
 };

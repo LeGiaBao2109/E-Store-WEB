@@ -226,7 +226,7 @@
                 };
                 localStorage.setItem('currentUser', JSON.stringify(sessionUser));
 
-                alert(`Đăng nhập thành công! Chào mừng ${userFound.fullName} đến với E-Store.`);
+                alert(`Đăng nhập thành công!`);
 
                 window.location.href = '/';
             } else {

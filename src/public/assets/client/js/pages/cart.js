@@ -1,17 +1,19 @@
 import { updateCartBadge, getCartItems, saveCart } from '../utils/cart.js';
 
 export const initCart = () => {
+    localStorage.removeItem('buy_now_temp');
+
     const $cartTableBody = $('.table tbody');
     const $totalAmount = $('.h3.fw-bold.text-danger');
 
     const getProductStock = (productId) => {
         const allProducts = JSON.parse(localStorage.getItem('products')) || [];
-        const product = allProducts.find(p => p.id === productId);
+        const product = allProducts.find(p => String(p.id) === String(productId));
         return product ? product.stock : 0;
     };
 
     const renderCart = () => {
-        const cart = getCartItems();
+        const cart = getCartItems('all');
         $cartTableBody.empty();
 
         if (cart.length === 0) {
@@ -43,7 +45,6 @@ export const initCart = () => {
                       </div>
                       <div class="ms-3 flex-grow-1">
                         <h6 class="fw-bold mb-1 text-truncate" style="max-width: 250px;">${item.title}</h6>
-                        <p class="text-muted small mb-0">Tồn kho: <span class="badge bg-light text-dark border">${currentStock}</span></p>
                       </div>
                     </div>
                   </td>
@@ -71,8 +72,8 @@ export const initCart = () => {
     };
 
     const updateQuantity = (id, change) => {
-        let cart = getCartItems();
-        const item = cart.find(p => p.id === id);
+        let cart = getCartItems('all');
+        const item = cart.find(p => String(p.id) === String(id));
         if (!item) return;
 
         const stock = getProductStock(id);
@@ -88,14 +89,14 @@ export const initCart = () => {
             item.quantity = newQty;
         }
         
-        saveCart(cart);
+        saveCart(cart, true);
         renderCart();
     };
 
     const removeFromCart = (id) => {
-        let cart = getCartItems();
-        cart = cart.filter(p => p.id !== id);
-        saveCart(cart);
+        let cart = getCartItems('all');
+        cart = cart.filter(p => String(p.id) !== String(id));
+        saveCart(cart, true);
         renderCart();
     };
 
@@ -124,11 +125,11 @@ export const initCart = () => {
             val = stock;
         }
 
-        let cart = getCartItems();
-        const item = cart.find(p => p.id === id);
+        let cart = getCartItems('all');
+        const item = cart.find(p => String(p.id) === String(id));
         if (item) {
             item.quantity = val;
-            saveCart(cart);
+            saveCart(cart, true);
             renderCart();
         }
     });

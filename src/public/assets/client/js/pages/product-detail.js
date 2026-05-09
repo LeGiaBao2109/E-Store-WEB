@@ -70,9 +70,24 @@ export const initProductDetail = () => {
                 </div>
             </div>
         </div>
+
+        <div class="row mt-5">
+            <div class="col-12">
+                <div class="product__reviews shadow-sm rounded-4 p-4 bg-white">
+                    <h5 class="fw-bold mb-4 d-flex align-items-center">
+                        <i class="bi bi-chat-left-text me-2 text-danger"></i> Đánh giá từ khách hàng
+                    </h5>
+                    <div id="reviewContainer">
+                        <!-- Reviews will be rendered here -->
+                    </div>
+                </div>
+            </div>
+        </div>
     `;
 
     $('.product-detail .container').html(detailHtml);
+
+    renderProductReviews(product.title);
 
     $(document).off('click', '.btn-buy-now').on('click', '.btn-buy-now', function () {
         const userData = localStorage.getItem('currentUser');
@@ -111,6 +126,46 @@ export const initProductDetail = () => {
     if (typeof initRelatedProducts === 'function') {
         initRelatedProducts(product, allProducts);
     }
+};
+
+const renderProductReviews = (productName) => {
+    const allReviews = JSON.parse(localStorage.getItem('product_reviews')) || [];
+    const productReviews = allReviews.filter(r => r.productName === productName);
+    const $container = $('#reviewContainer');
+
+    if (productReviews.length === 0) {
+        $container.html(`
+            <div class="text-center py-4">
+                <img src="https://cdn-icons-png.flaticon.com/512/4076/4076402.png" style="width: 80px; opacity: 0.3" class="mb-3">
+                <p class="text-muted">Sản phẩm này chưa có đánh giá nào.</p>
+            </div>
+        `);
+        return;
+    }
+
+    let reviewsHtml = '';
+    productReviews.reverse().forEach(review => {
+        reviewsHtml += `
+            <div class="review-item mb-4 pb-4 border-bottom">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="avatar-circle bg-danger-subtle text-danger rounded-circle d-flex align-items-center justify-content-center fw-bold" style="width: 40px; height: 40px;">
+                            ${review.fullName.charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                            <h6 class="mb-0 fw-bold">${review.fullName}</h6>
+                            <small class="text-muted">${review.date}</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="review-content ps-5">
+                    <p class="mb-0 text-dark">${review.content}</p>
+                </div>
+            </div>
+        `;
+    });
+
+    $container.html(reviewsHtml);
 };
 
 const initRelatedProducts = (currentProduct, allProducts) => {

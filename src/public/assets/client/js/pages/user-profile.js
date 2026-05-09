@@ -1,9 +1,11 @@
-import { getCartItems } from '../utils/cart.js';
+import {
+    getCartItems
+} from '../utils/cart.js';
 
 export const initUserProfile = () => {
     const renderData = () => {
         const userStr = localStorage.getItem('currentUser');
-        
+
         if (!userStr || userStr === "null") {
             window.location.replace("/");
             return;
@@ -36,9 +38,11 @@ export const initUserProfile = () => {
                 $tbody.append('<tr><td colspan="6" class="text-center py-4 text-muted">Bạn chưa có đơn hàng nào.</td></tr>');
             } else {
                 myOrders.forEach((order, index) => {
-                    const firstItem = (order.items && order.items[0]) ? order.items[0] : { title: 'Sản phẩm' };
+                    const firstItem = (order.items && order.items[0]) ? order.items[0] : {
+                        title: 'Sản phẩm'
+                    };
                     const otherItemsCount = (order.items) ? order.items.length - 1 : 0;
-                    
+
                     const productDisplay = otherItemsCount > 0 ?
                         `${firstItem.title} <br> <small class="text-muted">+ ${otherItemsCount} sản phẩm khác</small>` :
                         firstItem.title;
@@ -47,6 +51,7 @@ export const initUserProfile = () => {
                         'Chờ xác nhận': 'bg-warning text-dark',
                         'Đang giao': 'bg-info text-white',
                         'Hoàn thành': 'bg-success text-white',
+                        'Đã hoàn thành': 'bg-success text-white',
                         'Đã hủy': 'bg-secondary text-white'
                     };
                     const statusClass = statusMap[order.status] || 'bg-light text-dark';
@@ -82,7 +87,7 @@ export const initUserProfile = () => {
     $('#btnLogout').off('click').on('click', function (e) {
         e.preventDefault();
         e.stopImmediatePropagation();
-        
+
         if (confirm("Bạn có chắc muốn đăng xuất không?")) {
             localStorage.removeItem('currentUser');
             window.location.replace("/");
@@ -106,7 +111,6 @@ export const initUserProfile = () => {
         }
     });
 
-    // Validation số điện thoại
     $('#editPhone').off('blur').on('blur', function () {
         const value = $(this).val().replace(/[\s.-]/g, '');
         const $err = $('#errEditPhone');
@@ -124,7 +128,6 @@ export const initUserProfile = () => {
         }
     });
 
-    // Cập nhật thông tin cá nhân
     $('#modalUpdate .btn-danger').off('click').on('click', function (e) {
         e.preventDefault();
         $('#editName, #editPhone').trigger('blur');
@@ -146,28 +149,32 @@ export const initUserProfile = () => {
 
             const currentId = currentUser.id || currentUser._id;
             const userIndex = users.findIndex(u => String(u.id || u._id) === String(currentId));
-            
+
             if (userIndex !== -1) {
-                users[userIndex] = { ...users[userIndex], ...updatedData };
+                users[userIndex] = {
+                    ...users[userIndex],
+                    ...updatedData
+                };
                 localStorage.setItem('users', JSON.stringify(users));
             }
 
-            currentUser = { ...currentUser, ...updatedData };
+            currentUser = {
+                ...currentUser,
+                ...updatedData
+            };
             localStorage.setItem('currentUser', JSON.stringify(currentUser));
 
             alert("Thông tin cá nhân đã được lưu thành công!");
             $('.form-control').removeClass('is-valid is-invalid');
-            
-            // Đóng modal bằng Bootstrap API
+
             const modalEl = document.getElementById('modalUpdate');
             const modalInstance = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
             modalInstance.hide();
-            
+
             renderData();
         }
     });
 
-    // Validation đổi mật khẩu
     $('#currentPass').off('blur').on('blur', function () {
         const $err = $('#errCurrentPass');
         if ($(this).val() === "") {
@@ -214,7 +221,6 @@ export const initUserProfile = () => {
         }
     });
 
-    // Xử lý đổi mật khẩu
     $('#modalPass .btn-danger').off('click').on('click', function (e) {
         e.preventDefault();
         $('#currentPass, #newPass, #confirmPass').trigger('blur');
@@ -239,7 +245,7 @@ export const initUserProfile = () => {
 
             alert("Đổi mật khẩu thành công!");
             $('#currentPass, #newPass, #confirmPass').val('').removeClass('is-valid is-invalid');
-            
+
             const modalEl = document.getElementById('modalPass');
             const modalInstance = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
             modalInstance.hide();
@@ -251,5 +257,5 @@ export const initUserProfile = () => {
 
 window.viewOrderDetail = (orderId) => {
     sessionStorage.setItem('viewingOrderId', orderId);
-    window.location.href = "/user-profile/order-history"; 
+    window.location.href = `/user-profile/order-history?id=${orderId}`;
 };

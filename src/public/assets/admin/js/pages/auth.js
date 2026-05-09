@@ -57,7 +57,7 @@ export const initAdminAuth = () => {
                 loginTime: new Date().getTime()
             }));
 
-            alert(`Chào mừng Admin ${currentAdmin.fullName} quay trở lại!`);
+            alert(`Đăng nhập thành công!`);
             window.location.href = '/admin';
         } else {
             alert('Mã nhân viên hoặc mật khẩu không chính xác!');
@@ -75,7 +75,7 @@ export const initAdminAuth = () => {
     $(document).on('click', '#forgotPasswordAdmin', function (e) {
         e.preventDefault();
 
-        const adminCode = prompt("Vui lòng nhập Mã nhân viên (Admin Code) để xác thực:");
+        const adminCode = prompt("Vui lòng nhập Mã nhân viên để xác thực:");
 
         if (adminCode) {
             const admins = JSON.parse(localStorage.getItem('admins')) || [];
@@ -89,12 +89,12 @@ export const initAdminAuth = () => {
                 if (newPass && regexPass.test(newPass)) {
                     admins[adminIndex].password = newPass;
                     localStorage.setItem('admins', JSON.stringify(admins));
-                    alert("Đổi mật khẩu Admin thành công! Bạn có thể đăng nhập ngay.");
+                    alert("Đổi mật khẩu thành công! Bạn có thể đăng nhập ngay.");
                 } else {
                     alert("Mật khẩu mới không hợp lệ! (Phải có ít nhất 8 ký tự, gồm cả chữ và số)");
                 }
             } else {
-                alert("Mã nhân viên này không tồn tại trong hệ thống quản trị!");
+                alert("Mã nhân viên này không tồn tại trong hệ thống!");
             }
         }
     });

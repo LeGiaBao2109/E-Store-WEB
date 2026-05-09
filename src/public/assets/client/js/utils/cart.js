@@ -97,11 +97,15 @@ export const clearTempCart = () => {
     localStorage.removeItem('buy_now_temp');
 };
 
-export const saveCart = (cartData) => {
-    if (localStorage.getItem('buy_now_temp')) {
+export const saveCart = (cartData, forceMainCart = false) => {
+    const cartKey = getCartKey();
+    
+    if (forceMainCart) {
+        localStorage.setItem(cartKey, JSON.stringify(cartData));
+        localStorage.removeItem('buy_now_temp');
+    } else if (localStorage.getItem('buy_now_temp')) {
         localStorage.setItem('buy_now_temp', JSON.stringify(cartData));
     } else {
-        const cartKey = getCartKey();
         localStorage.setItem(cartKey, JSON.stringify(cartData));
     }
     updateCartBadge();

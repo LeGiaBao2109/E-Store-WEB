@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sitemap E-Store</title>
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;600;700&display=swap');
+
+        :root {
+            --primary-color: #d62828;
+            --secondary-color: #003049;
+            --third-color: #fcbf49;
+            --bg-light: #f8f9fa;
+            --line-color: #cbd5e0;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Be Vietnam Pro', sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 40px 0;
+            background-color: var(--bg-light);
+            color: var(--secondary-color);
+        }
+
+        a {
+            text-decoration: none !important;
+        }
+
+        .nav-pills .nav-link {
+            color: var(--secondary-color);
+            font-weight: 600;
+            border-radius: 8px;
+            padding: 10px 30px;
+            transition: 0.3s;
+        }
+
+        .nav-pills .nav-link.active {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        .nav-pills .nav-link:not(.active):hover {
+            background-color: #e2e8f0;
+        }
+
+        .sitemap-container {
+            display: flex;
+            justify-content: center;
+            overflow-x: auto;
+            padding: 20px;
+            min-height: 400px;
+        }
+
+        .tree ul {
+            padding-top: 20px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            transition: all 0.5s;
+        }
+
+        .tree li {
+            float: left;
+            text-align: center;
+            list-style-type: none;
+            position: relative;
+            padding: 20px 10px 0 10px;
+            transition: all 0.5s;
+        }
+
+        .tree li::before,
+        .tree li::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 50%;
+            border-top: 1.5px solid var(--line-color);
+            width: 50%;
+            height: 20px;
+        }
+
+        .tree li::after {
+            right: auto;
+            left: 50%;
+            border-left: 1.5px solid var(--line-color);
+        }
+
+        .tree li:only-child::after,
+        .tree li:only-child::before {
+            display: none;
+        }
+
+        .tree li:only-child {
+            padding-top: 0;
+        }
+
+        .tree li:first-child::before,
+        .tree li:last-child::after {
+            border: 0 none;
+        }
+
+        .tree li:last-child::before {
+            border-right: 1.5px solid var(--line-color);
+            border-radius: 0 8px 0 0;
+        }
+
+        .tree li:first-child::after {
+            border-radius: 8px 0 0 0;
+        }
+
+        .tree ul ul::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            border-left: 1.5px solid var(--line-color);
+            width: 0;
+            height: 20px;
+        }
+
+        .node {
+            background: #fff;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            padding: 12px 20px;
+            display: inline-block;
+            border-radius: 12px;
+            min-width: 160px;
+            box-shadow: 0 10px 25px -5px rgba(0, 48, 73, 0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            z-index: 1;
+        }
+
+        .node:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 48, 73, 0.1);
+            border-color: var(--primary-color);
+        }
+
+        .node .title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+
+        .node-main {
+            background: var(--secondary-color);
+            color: #fff;
+        }
+
+        .node-main .title {
+            color: #fff;
+        }
+
+        .node-admin {
+            background: var(--primary-color);
+            color: #fff;
+        }
+
+        .node-admin .title {
+            color: #fff;
+        }
+
+        .node-sub {
+            background: #fdfdfd;
+            padding: 8px 15px;
+            min-width: 140px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="tab-content" id="sitemapTabContent">
+            <div class="tab-pane fade show active" id="client-content" role="tabpanel">
+                <div class="sitemap-container">
+                    <div class="tree">
+                        <ul>
+                            <li>
+                                <a href="/" class="node node-main">
+                                    <span class="title">Trang Chủ</span>
+                                </a>
+                                <ul>
+                                    <li>
+                                        <a href="/products" class="node">
+                                            <span class="title">Trang Danh Sách Sản Phẩm</span>
+                                        </a>
+                                        <ul>
+                                            <li><a href="/products/detail/iphone-13-128gb---red" class="node node-sub"><span class="title">Trang Chi
+                                                        Tiết Sản Phẩm</span></a></li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a href="/news" class="node">
+                                            <span class="title">Trang Tin Tức</span>
+                                        </a>
+                                        <ul>
+                                            <li><a href="/news/detail" class="node node-sub"><span class="title">Trang Chi
+                                                        Tiết Tin Tức</span></a></li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a href="/cart" class="node">
+                                            <span class="title">Trang Giỏ Hàng</span>
+                                        </a>
+                                        <ul>
+                                            <li><a href="/cart/payment" class="node node-sub"><span class="title">Trang Thanh
+                                                        Toán</span></a></li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <a href="/user-profile" class="node">
+                                            <span class="title">Trang Thông Tin Người Dùng</span>
+                                        </a>
+                                        <ul>
+                                            <li><a href="/auth" class="node node-sub"><span class="title">Trang Đăng
+                                                        Nhập/Ký</span></a></li>
+                                            <li><a href="/user-profile/order-history" class="node node-sub"><span
+                                                        class="title">Trang Lịch Sử Đơn Hàng</span></a></li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="admin-content" role="tabpanel">
+                <div class="sitemap-container">
+                    <div class="tree">
+                        <ul>
+                            <li>
+                                <a href="/admin/auth" class="node node-admin">
+                                    <span class="title">Trang Đăng Nhập Admin</span>
+                                </a>
+                                <ul>
+                                    <li>
+                                        <a href="/admin" class="node">
+                                            <span class="title">Trang Quản Trị</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

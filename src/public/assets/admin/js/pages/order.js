@@ -5,17 +5,42 @@ export const initOrderAdmin = () => {
     const $searchInput = $('#content-orders input[placeholder*="Tìm mã đơn"]');
 
     const statusFlow = {
-        'Chờ xác nhận': { badgeClass: 'bg-warning-subtle text-warning border-warning', nextStatus: 'Đã xác nhận', btnText: 'Duyệt & Xác nhận đơn', btnClass: 'btn-danger' },
-        'Đã xác nhận': { badgeClass: 'bg-info-subtle text-info border-info', nextStatus: 'Đang giao hàng', btnText: 'Xác nhận đi giao hàng', btnClass: 'btn-info text-white' },
-        'Đang giao hàng': { badgeClass: 'bg-primary-subtle text-primary border-primary', nextStatus: 'Đã hoàn thành', btnText: 'Xác nhận Đã Giao', btnClass: 'btn-success' },
-        'Đã hoàn thành': { badgeClass: 'bg-success-subtle text-success border-success', nextStatus: null, btnText: '', btnClass: 'd-none' },
-        'Đã hủy': { badgeClass: 'bg-danger-subtle text-danger border-danger', nextStatus: null, btnText: '', btnClass: 'd-none' }
+        'Chờ xác nhận': {
+            badgeClass: 'bg-warning-subtle text-warning border-warning',
+            nextStatus: 'Đã xác nhận',
+            btnText: 'Duyệt & Xác nhận đơn',
+            btnClass: 'btn-danger'
+        },
+        'Đã xác nhận': {
+            badgeClass: 'bg-info-subtle text-info border-info',
+            nextStatus: 'Đang giao hàng',
+            btnText: 'Xác nhận đi giao hàng',
+            btnClass: 'btn-info text-white'
+        },
+        'Đang giao hàng': {
+            badgeClass: 'bg-primary-subtle text-primary border-primary',
+            nextStatus: 'Đã hoàn thành',
+            btnText: 'Xác nhận Đã Giao',
+            btnClass: 'btn-success'
+        },
+        'Đã hoàn thành': {
+            badgeClass: 'bg-success-subtle text-success border-success',
+            nextStatus: null,
+            btnText: '',
+            btnClass: 'd-none'
+        },
+        'Đã hủy': {
+            badgeClass: 'bg-danger-subtle text-danger border-danger',
+            nextStatus: null,
+            btnText: '',
+            btnClass: 'd-none'
+        }
     };
 
     const renderOrdersTable = () => {
         let allOrders = JSON.parse(localStorage.getItem('order_history')) || [];
         const allUsers = JSON.parse(localStorage.getItem('users')) || [];
-        
+
         allOrders.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
 
         const selectedStatus = $filterStatus.val();
@@ -31,8 +56,8 @@ export const initOrderAdmin = () => {
 
         const filteredOrders = allOrders.filter(order => {
             const matchesStatus = selectedStatus === 'all' || order.status === statusMap[selectedStatus];
-            const matchesSearch = order.orderId.toLowerCase().includes(searchTerm) || 
-                                 (order.customerName || '').toLowerCase().includes(searchTerm);
+            const matchesSearch = order.orderId.toLowerCase().includes(searchTerm) ||
+                (order.customerName || '').toLowerCase().includes(searchTerm);
             return matchesStatus && matchesSearch;
         });
 
@@ -50,7 +75,9 @@ export const initOrderAdmin = () => {
             const displayPhone = order.phone || userAccount.phone || 'N/A';
             const total = (order.totalAmount || 0).toLocaleString('vi-VN');
             const currentStatus = order.status || 'Chờ xác nhận';
-            const flow = statusFlow[currentStatus] || { badgeClass: 'bg-secondary-subtle text-secondary' };
+            const flow = statusFlow[currentStatus] || {
+                badgeClass: 'bg-secondary-subtle text-secondary'
+            };
             const borderClass = flow.badgeClass.split(' ')[1].replace('text-', 'border-');
 
             $desktopTbody.append(`
@@ -130,7 +157,7 @@ export const initOrderAdmin = () => {
         } else if (currentStatus === 'Đã xác nhận' || currentStatus === 'Đang giao hàng') {
             $btnProcess.show().addClass(flow.btnClass).text(flow.btnText);
             $btnPrint.show();
-            if(currentStatus === 'Đã xác nhận') $btnCancel.show();
+            if (currentStatus === 'Đã xác nhận') $btnCancel.show();
         } else if (currentStatus === 'Đã hoàn thành') {
             $btnPrint.show();
         }
@@ -182,13 +209,13 @@ export const initOrderAdmin = () => {
         window.print();
     };
 
-    $(document).off('click', '#btnProcessOrder').on('click', '#btnProcessOrder', function() {
+    $(document).off('click', '#btnProcessOrder').on('click', '#btnProcessOrder', function () {
         const orderId = $('#modalOrderDetail').attr('data-order-id');
         let allOrders = JSON.parse(localStorage.getItem('order_history')) || [];
         const idx = allOrders.findIndex(o => o.orderId === orderId);
         if (idx === -1) return;
 
-        const nextStatus = statusFlow[allOrders[idx].status]?.nextStatus;
+        const nextStatus = statusFlow[allOrders[idx].status] ?.nextStatus;
         if (nextStatus && confirm(`Chuyển đơn hàng sang: ${nextStatus}?`)) {
             allOrders[idx].status = nextStatus;
             localStorage.setItem('order_history', JSON.stringify(allOrders));
@@ -197,7 +224,7 @@ export const initOrderAdmin = () => {
         }
     });
 
-    $(document).off('click', '#btnCancelOrder').on('click', '#btnCancelOrder', function() {
+    $(document).off('click', '#btnCancelOrder').on('click', '#btnCancelOrder', function () {
         const orderId = $('#modalOrderDetail').attr('data-order-id');
         let allOrders = JSON.parse(localStorage.getItem('order_history')) || [];
         const idx = allOrders.findIndex(o => o.orderId === orderId);

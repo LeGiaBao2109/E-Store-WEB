@@ -9,11 +9,8 @@ export const initPayment = () => {
     const $totalAmountDisplay = $('.order-summary .h4.text-danger');
 
     const renderOrderSummary = () => {
-        let cart = getCartItems('buy_now');
-        
-        if (!cart || cart.length === 0) {
-            cart = getCartItems('all');
-        }
+        const isBuyNowMode = localStorage.getItem('buy_now_temp') !== null;
+        let cart = isBuyNowMode ? getCartItems('buy_now') : getCartItems('all');
 
         const currentUser = JSON.parse(localStorage.getItem('currentUser'));
         if (!currentUser) {
@@ -28,6 +25,9 @@ export const initPayment = () => {
 
         if (!cart || cart.length === 0) {
             $orderItemsContainer.html('<div class="text-center py-3 text-muted">Đơn hàng trống</div>');
+            $subtotalDisplay.text('0đ');
+            $vatDisplay.text('0đ');
+            $totalAmountDisplay.text('0đ');
             return;
         }
 
@@ -62,12 +62,18 @@ export const initPayment = () => {
         $vatDisplay.text(`${vatAmount.toLocaleString()}đ`);
         $totalAmountDisplay.text(`${finalTotal.toLocaleString()}đ`);
 
-        window.currentOrderTotal = { subtotal, vatAmount, finalTotal, items: cart };
+        window.currentOrderTotal = {
+            subtotal,
+            vatAmount,
+            finalTotal,
+            items: cart,
+            isBuyNowMode
+        };
     };
 
-    $(document).off('click', 'button[type="submit"]').on('click', 'button[type="submit"]', function(e) {
+    $(document).off('click', 'button[type="submit"]').on('click', 'button[type="submit"]', function (e) {
         e.preventDefault();
-        
+
         const finalFullName = $('#orderFullName').val().trim();
         const finalPhone = $('#orderPhone').val().trim();
         const address = $('#fullAddress').val()?.trim();
@@ -82,12 +88,12 @@ export const initPayment = () => {
             return;
         }
 
-        const { subtotal, vatAmount, finalTotal, items } = window.currentOrderTotal;
+        const { subtotal, vatAmount, finalTotal, items, isBuyNowMode } = window.currentOrderTotal;
         let allProducts = JSON.parse(localStorage.getItem('products')) || [];
         let stockError = false;
 
         items.forEach(cartItem => {
-            const p = allProducts.find(prod => prod.id === cartItem.id);
+            const p = allProducts.find(prod => String(prod.id) === String(cartItem.id));
             if (p) {
                 if (p.stock >= cartItem.quantity) {
                     p.stock -= cartItem.quantity;
@@ -124,14 +130,13 @@ export const initPayment = () => {
             history.unshift(newOrder);
             localStorage.setItem('order_history', JSON.stringify(history));
 
-            if (localStorage.getItem('buy_now_temp')) {
-                clearTempCart(); 
-            } else {
-                saveCart([]); 
+            clearTempCart();
+            if (!isBuyNowMode) {
+                saveCart([], true);
             }
 
             alert("Đặt hàng thành công!");
-            window.location.href = "/"; 
+            window.location.href = "/";
         } catch (err) {
             alert("Lỗi hệ thống khi đặt hàng!");
         }
