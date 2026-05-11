@@ -57,7 +57,7 @@ const renderUserTable = (data) => {
                             <i class="bi bi-pencil-square text-primary"></i>
                         </button>
                         <button class="btn btn-sm btn-light border-0 btn-toggle-status" data-id="${user.id}">
-                            <i class="bi ${isBlock ? 'bi-unlock text-success' : 'bi-lock text-danger'}"></i>
+                            <i class="bi ${isBlock ? 'bi-lock text-danger' : 'bi-unlock text-success'}"></i>
                         </button>
                         <button class="btn btn-sm btn-light border-0 btn-delete-customer" data-id="${user.id}">
                             <i class="bi bi-trash text-danger"></i>

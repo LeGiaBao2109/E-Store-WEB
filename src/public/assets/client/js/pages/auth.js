@@ -199,7 +199,7 @@
             const passwordInput = $('#loginPass').val();
 
             if (accountInput === "" || passwordInput === "") {
-                alert("Bảo ơi, nhập đủ tài khoản với mật khẩu đã nhé!");
+                alert("Nhập đủ tài khoản với mật khẩu đã nhé!");
                 return;
             }
 
