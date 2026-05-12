@@ -1,9 +1,21 @@
-import { initAdminAuth } from './pages/auth.js';
-import { initDashboardCharts } from './pages/dashboard.js';
-import { initProduct } from './pages/product.js';
-import { initOrderAdmin } from './pages/order.js';
-import { initCustomerManagement } from './pages/customer.js';
-import { initNews } from './pages/news.js';
+import {
+    initAdminAuth
+} from './pages/auth.js';
+import {
+    initDashboardCharts
+} from './pages/dashboard.js';
+import {
+    initProduct
+} from './pages/product.js';
+import {
+    initOrderAdmin
+} from './pages/order.js';
+import {
+    initCustomerManagement
+} from './pages/customer.js';
+import {
+    initNews
+} from './pages/news.js';
 
 $(function () {
     const path = window.location.pathname;
@@ -62,7 +74,7 @@ $(function () {
     window.printOrderBill = function () {
         const orderId = $('#detailOrderId').text();
         const customerName = "Khách hàng hệ thống";
-        const total = 0; 
+        const total = 0;
         $('#p-order-id').text(orderId);
         $('#p-date').text(new Date().toLocaleDateString('vi-VN'));
         $('#p-name').text(customerName);
@@ -80,18 +92,7 @@ $(function () {
         $('#btnSubmitEditCustomer').trigger('click');
     };
 
-    window.updateWarehouse = function() {
-        if (typeof window.updateWarehouseLogic === 'function') {
-            window.updateWarehouseLogic();
-        } else {
-            const btn = document.querySelector('button[onclick="updateWarehouse()"]');
-            if (btn) {
-                $(btn).trigger('click');
-            }
-        }
-    };
-
-    window.adminLogout = function() {
+    window.adminLogout = function () {
         if (confirm('Bạn có chắc chắn muốn đăng xuất?')) {
             localStorage.removeItem('currentAdmin');
             window.location.href = '/admin/auth';

@@ -253,20 +253,29 @@ export const initProduct = () => {
             }
         });
 
-        window.updateWarehouse = function () {
+        $(document).off('click', '#btnUpdateWarehouse').on('click', '#btnUpdateWarehouse', function () {
             const currentId = $('#modalProductDetail').attr('data-current-id');
             const type = $('#logType').val();
             const $qtyInput = $('#logQty');
             const qty = parseInt($qtyInput.val());
             const note = $('#logNote').val().trim() || 'Giao dịch kho';
 
-            if (isNaN(qty) || qty <= 0) return alert('Vui lòng nhập số lượng > 0');
+            if (isNaN(qty) || qty <= 0) {
+                alert('Vui lòng nhập số lượng > 0');
+                return;
+            }
 
             const products = getProducts();
             const index = products.findIndex(p => String(p.id) === currentId);
+
+            if (index === -1) return alert("Lỗi: Không tìm thấy sản phẩm!");
+
             let currentStock = parseInt(products[index].stock || 0);
 
-            if (type === 'export' && qty > currentStock) return alert(`Vượt quá tồn kho (${currentStock})`);
+            if (type === 'export' && qty > currentStock) {
+                alert(`Lỗi: Vượt quá tồn kho hiện có (${currentStock} chiếc)`);
+                return;
+            }
 
             const newStock = (type === 'import') ? (currentStock + qty) : (currentStock - qty);
             products[index].stock = newStock;
@@ -283,13 +292,16 @@ export const initProduct = () => {
             products[index].warehouseLogs.unshift(newLog);
 
             localStorage.setItem('products', JSON.stringify(products));
+
             $('#currentStockDisplay').text(newStock);
             $qtyInput.val('');
             $('#logNote').val('');
+
             renderWarehouseHistory(products[index]);
             renderProductTable();
+
             alert("Ghi sổ kho thành công!");
-        };
+        });
     };
 
     const renderPriceHistory = (product) => {
