@@ -234,17 +234,61 @@ export const initProduct = () => {
             const index = products.findIndex(p => String(p.id) === currentId);
 
             if (index !== -1) {
-                const title = $('#editProductName').val().trim();
+                const $titleInput = $('#editProductName');
+                const $imageInput = $('#editProductImage');
+                const $priceInput = $('#editProductPrice');
+
+                const title = $titleInput.val().trim();
+                const image = $imageInput.val().trim();
+                const price = $priceInput.val();
                 const category = $('#editProductCategory').val();
+
+                let isValid = true;
+
+                if (!title) {
+                    showError($titleInput, 'Tên không được để trống');
+                    isValid = false;
+                } else {
+                    showSuccess($titleInput);
+                }
+
+                if (!image) {
+                    showError($imageInput, 'Link ảnh không được để trống');
+                    isValid = false;
+                } else {
+                    showSuccess($imageInput);
+                }
+
+                if (!price || price <= 0) {
+                    showError($priceInput, 'Giá phải > 0');
+                    isValid = false;
+                } else {
+                    showSuccess($priceInput);
+                }
+
+                if (!isValid) return;
+
+                const oldPrice = products[index].price;
+                const newPrice = parseFloat(price);
 
                 products[index].title = title;
                 products[index].slug = createSlug(title);
                 products[index].categorySlug = categorySlugMap[category] || 'other';
-                products[index].image = $('#editProductImage').val().trim();
-                products[index].price = parseFloat($('#editProductPrice').val());
+                products[index].image = image;
+                products[index].price = newPrice;
                 products[index].category = category;
                 products[index].status = $('#editProductStatus').val();
                 products[index].description = $('#editProductDesc').val().trim();
+
+                if (oldPrice !== newPrice) {
+                    if (!products[index].priceHistory) products[index].priceHistory = [];
+                    products[index].priceHistory.unshift({
+                        date: new Date().toLocaleString('vi-VN'),
+                        price: newPrice,
+                        reason: 'Cập nhật thông tin hệ thống',
+                        user: getCurrentAdminName()
+                    });
+                }
 
                 localStorage.setItem('products', JSON.stringify(products));
                 alert('Cập nhật thông tin thành công!');
